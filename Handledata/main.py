@@ -89,4 +89,3 @@ print()
 # transform_data(r"E:\Biathlon 010203")
 
 
-ba.create_json_and_db()

@@ -1,6 +1,6 @@
 """ This module extract data from the 'Document' objects"""
 
-from Handledata import converting_data as cv
+from Handledata import converting_data as cv, biathlete as ba
 import re
 import datetime
 import numpy as np
@@ -525,6 +525,11 @@ class BiathlonData:
             text = text + i.getText('text')
         text_ls = text.split("\n")  # array of the lines of the string
         # print(text_ls)
+
+        # update the athlete table in the database
+        ba.update_athlete_db(text_ls)
+
+
         number_of_biathletes = 200
         if not self.metadata['number_of_entries'] is None:
             number_of_biathletes = self.metadata['number_of_entries']

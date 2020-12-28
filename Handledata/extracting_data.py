@@ -594,6 +594,7 @@ class BiathlonData:
             # print(self.data[self.data['Name'].isin(['two', 'NaN'])])
             # print(self.data[self.data['Name'].isna()])
 
+
             self.data["Name"] = self.data["Name"].astype(str)
             print(text_ls)
             for i, j in enumerate(text_ls):
@@ -618,8 +619,8 @@ class BiathlonData:
             #            #total_time =
             #           weather_ls = [None, None, None, None]
             # print(self.data.head())
-        # for h, column in enumerate(columns_list):
-        #   self.data[column] = self.data[column].astype(types[h])
+        #for h, column in enumerate(columns_list):
+         #   self.data[column] = self.data[column].astype(types[h])
 
     #  except IndexError:
     #     print('this should not happen; Please look into get_data()')

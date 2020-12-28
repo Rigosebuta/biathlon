@@ -1,6 +1,6 @@
 """ This module extract data from the 'Document' objects"""
 
-from Handledata import converting_data as cv, biathlete as ba
+from DataProcessing import converting_data as cv, biathlete as ba
 import re
 import datetime
 import numpy as np

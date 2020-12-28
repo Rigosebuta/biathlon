@@ -1,7 +1,7 @@
 """This module invokes the other modules to transform all the data"""
 import os
 
-from Handledata import converting_data as cd, extracting_data as ed, biathlete as ba
+from DataProcessing import converting_data as cd, extracting_data as ed, biathlete as ba
 
 
 ba.create_json_and_db()

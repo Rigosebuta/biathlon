@@ -1,5 +1,5 @@
-import sqlite3
 import json
+import sqlite3
 
 
 def create_json_and_db():
@@ -8,7 +8,7 @@ def create_json_and_db():
         This method should only be invoked once at the beginning. If this method is invoked at a later
         date then all json lists reset to empty lists
     """
-    connection = sqlite3.connect("Data/Biathlon_Data.db")
+    connection = sqlite3.connect("../Data/Biathlon_Data.db")
     cursor = connection.cursor()
 
     # size (in centimeters) and weight (in kilograms)
@@ -47,7 +47,7 @@ def create_json_and_db():
                       "skis": skis, "rifle": rifle, "ammunition": ammunition, "racesuit": racesuit,
                       "shoes": shoes, "bindings": bindings, "skipoles": skipoles, "gloves": gloves,
                       "wax": wax, "goggles": goggles}
-    json.dump(blacklist_dict, open('Data/blacklist.json', 'w'))
+    json.dump(blacklist_dict, open('../Data/blacklist.json', 'w'))
 
 
 def get_json_lists(path):
@@ -112,13 +112,13 @@ def set_json_lists(json_list):
                       "racesuit": json_list[9], "shoes": json_list[10], "bindings": json_list[11],
                       "skipoles": json_list[12], "gloves": json_list[13], "wax": json_list[14],
                       "goggles": json_list[15]}
-    json.dump(blacklist_dict, open('Data/blacklist.json', 'w'))
+    json.dump(blacklist_dict, open('../Data/blacklist.json', 'w'))
 
 
 def get_connection():
     """This method returns a connection to the database Data/Biathlon_Data"""
     try:
-        connection = sqlite3.connect("Data/Biathlon_Data.db")
+        connection = sqlite3.connect("../Data/Biathlon_Data.db")
     except sqlite3.Error as error:
         print("Failed to insert data from table Athlete", error)
     return connection
@@ -156,7 +156,7 @@ def create_athlete(athlete_name, connection):
 
     # json values
     no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
-    shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists('Data/blacklist.json')
+    shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists('../Data/blacklist.json')
 
     print("Please try to use same names for same/similar things. If data is not existing"
           " use NULL")
@@ -277,7 +277,7 @@ def update_athlete_db(text_ls):
 
         # json values
         no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
-        shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists('Data/blacklist.json')
+        shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists('../Data/blacklist.json')
 
         # if text is in the list which are no names text can be skipped
         if text in no_names:

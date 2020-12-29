@@ -1,10 +1,11 @@
 """ This module extract data from the 'Document' objects"""
 
-from DataProcessing import converting_data as cv, biathlete as ba
-import re
 import datetime
+import re
 import numpy as np
 import pandas as pd
+
+from DataProcessing import converting_data as cv, biathlete as ba
 
 
 class BiathlonData:

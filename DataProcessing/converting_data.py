@@ -6,8 +6,9 @@
     from PyMuPDF: https://pymupdf.readthedocs.io/en/latest/document.html
 """
 
-import fitz
+
 import re
+import fitz
 
 
 def convert_pdf_to_document(file_list):

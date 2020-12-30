@@ -4,22 +4,6 @@ import sqlite3
 import json
 
 
-# @pytest.fixture
-# def my_wallet():
-#    '''Returns a Wallet instance with a zero balance'''
-#    return Wallet()
-
-
-# @pytest.mark.parametrize("earned,spent,expected", [
-#    (30, 10, 20),
-#    (20, 2, 18),
-# ])
-# def test_transactions(my_wallet, earned, spent, expected):
-#   my_wallet.add_cash(earned)
-#  my_wallet.spend_cash(spent)
-# assert my_wallet.balance == expected
-
-
 def test_get_connection():
     """This method tests if the method get_connection() returns a Connection object"""
     conn = ba.get_connection()
@@ -73,6 +57,7 @@ def test_get_json_lists():
     for i in json_tuple:
         assert isinstance(i, list)
 
+
 def test_set_json_lists_true_cases():
     """This method tests the method set_json_lists() with a true case"""
     ba.create_json_and_db()  # empty dictionary
@@ -81,13 +66,12 @@ def test_set_json_lists_true_cases():
     assert json_lists == list(ba.get_json_lists())
 
 
-
-
 def test_set_json_lists_index_error():
     """This method tests the method set_json_lists() with a case which invokes an IndexError"""
     ba.create_json_and_db()  # empty dictionary
     with pytest.raises(IndexError):
         ba.set_json_lists([[], ["2"]])
+
 
 def test_set_json_lists_type_error():
     """This method tests the method set_json_lists() with a case which invokes an TypeError"""

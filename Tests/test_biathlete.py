@@ -74,17 +74,19 @@ def test_set_json_lists_index_error():
 
 
 def test_set_json_lists_type_error():
-    """This method tests the method set_json_lists() with a case which invokes an TypeError"""
+    """This method tests the method set_json_lists() with a case which invokes a TypeError"""
     ba.create_json_and_db()  # empty dictionary
     with pytest.raises(TypeError):
         ba.set_json_lists(["not_a_list", [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
 
 
 def test_create_athlete():
+    """This method tests the method create_athlete() with a case which invokes a TypeError"""
     with pytest.raises(TypeError):
         ba.create_athlete(1)
 
 
 def test_update_athlete_db():
+    """This method tests the method update_athlete_db() with a case which invokes a TypeError"""
     with pytest.raises(TypeError):
         ba.update_athlete_db(1)

@@ -8,36 +8,40 @@ def create_json_and_db():
         This method should only be invoked once at the beginning. If this method is invoked at a later
         date then all json lists reset to empty lists
     """
-    connection = sqlite3.connect("../Data/Biathlon_Data.db")
-    cursor = connection.cursor()
-
-    # size (in centimeters) and weight (in kilograms)
-    creation_sql = """
-        CREATE TABLE IF NOT EXISTS Athlete (
-        name VARCHAR(40) NOT NULL, 
-        birthdate VARCHAR(50) NOT NULL, 
-        country VARCHAR(3) NOT NULL,
-        languages VARCHAR(400) ,
-        hobbies VARCHAR(500),
-        profession VARCHAR(100),
-        family VARCHAR(100),
-        skis VARCHAR(20),
-        rifle VARCHAR(20),
-        ammunition VARCHAR(20),
-        racesuit VARCHAR(20),
-        shoes VARCHAR(20),
-        bindings VARCHAR(20),
-        skipoles VARCHAR(20),
-        gloves VARCHAR(20),
-        wax VARCHAR(20),
-        goggles VARCHAR(20),
-        size INTEGER,
-        weight INTEGER,
-        PRIMARY KEY(name, birthdate, country)
-        );"""
-    cursor.execute(creation_sql)
-    connection.commit()
-    connection.close()
+    # create an Athlete table if it doesn't already exist
+    try:
+        connection = sqlite3.connect("../Data/Biathlon_Data.db")
+        cursor = connection.cursor()
+        creation_sql = """
+            CREATE TABLE IF NOT EXISTS Athlete (
+            name VARCHAR(40) NOT NULL, 
+            birthdate VARCHAR(50) NOT NULL, 
+            country VARCHAR(3) NOT NULL,
+            languages VARCHAR(400) ,
+            hobbies VARCHAR(500),
+            profession VARCHAR(100),
+            family VARCHAR(100),
+            skis VARCHAR(20),
+            rifle VARCHAR(20),
+            ammunition VARCHAR(20),
+            racesuit VARCHAR(20),
+            shoes VARCHAR(20),
+            bindings VARCHAR(20),
+            skipoles VARCHAR(20),
+            gloves VARCHAR(20),
+            wax VARCHAR(20),
+            goggles VARCHAR(20),
+            size INTEGER,
+            weight INTEGER,
+            PRIMARY KEY(name, birthdate, country)
+            );"""
+        cursor.execute(creation_sql)
+        connection.commit()
+        connection.close()
+    except sqlite3.Error:
+        print("Please look into DataProcessing.biathlete create_json_and_db at database creation")
+    finally:
+        connection.close()
 
     # create a json file with empty lists
     no_names = country = languages = hobbies = profession = skis = family = rifle = ammunition = \
@@ -47,14 +51,15 @@ def create_json_and_db():
                       "skis": skis, "rifle": rifle, "ammunition": ammunition, "racesuit": racesuit,
                       "shoes": shoes, "bindings": bindings, "skipoles": skipoles, "gloves": gloves,
                       "wax": wax, "goggles": goggles}
-    json.dump(blacklist_dict, open('../Data/blacklist.json', 'w'))
+    try:
+        with open('../Data/blacklist.json', 'w') as f:
+            json.dump(blacklist_dict, f)
+    except IOError:
+        print("Please look into DataProcessing.biathlete create_json_and_db at json creation")
 
 
-def get_json_lists(path):
-    """This method returns different lists from the json file
-
-        Args:
-            path (str): path of the json file which is used for reading
+def get_json_lists():
+    """This method returns different lists from the json file as a tuple
 
         Returns:
             no_names: strings which are not names of an athlete
@@ -77,26 +82,29 @@ def get_json_lists(path):
             All this lists except for no_names exists only as an orientation while creating a new
             athlete. It is a goal to name equal/similar things same.
     """
-    with open(path, 'r') as file:
-        blacklist_dict = json.loads(file.read())
-        no_names = blacklist_dict["no_names"]
-        country = blacklist_dict["country"]
-        languages = blacklist_dict["languages"]
-        hobbies = blacklist_dict["hobbies"]
-        profession = blacklist_dict["profession"]
-        family = blacklist_dict["family"]
-        skis = blacklist_dict["skis"]
-        rifle = blacklist_dict["rifle"]
-        ammunition = blacklist_dict["ammunition"]
-        racesuit = blacklist_dict["racesuit"]
-        shoes = blacklist_dict["shoes"]
-        bindings = blacklist_dict["bindings"]
-        skipoles = blacklist_dict["skipoles"]
-        gloves = blacklist_dict["gloves"]
-        wax = blacklist_dict["wax"]
-        goggles = blacklist_dict["goggles"]
-    return no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, \
-           racesuit, shoes, bindings, skipoles, gloves, wax, goggles
+    try:
+        with open('../Data/blacklist.json', 'r') as file:
+            blacklist_dict = json.loads(file.read())
+            no_names = blacklist_dict["no_names"]
+            country = blacklist_dict["country"]
+            languages = blacklist_dict["languages"]
+            hobbies = blacklist_dict["hobbies"]
+            profession = blacklist_dict["profession"]
+            family = blacklist_dict["family"]
+            skis = blacklist_dict["skis"]
+            rifle = blacklist_dict["rifle"]
+            ammunition = blacklist_dict["ammunition"]
+            racesuit = blacklist_dict["racesuit"]
+            shoes = blacklist_dict["shoes"]
+            bindings = blacklist_dict["bindings"]
+            skipoles = blacklist_dict["skipoles"]
+            gloves = blacklist_dict["gloves"]
+            wax = blacklist_dict["wax"]
+            goggles = blacklist_dict["goggles"]
+        return no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, \
+                racesuit, shoes, bindings, skipoles, gloves, wax, goggles
+    except IOError:
+        print("Please look into DataProcessing.biathlete get_json_lists()")
 
 
 def set_json_lists(json_list):
@@ -106,17 +114,29 @@ def set_json_lists(json_list):
             json_list (str): list of updated json lists
 
     """
+
+    if len(json_list) < 16:
+        raise IndexError
+    for i in json_list:
+        if not isinstance(i, list):
+            raise TypeError
+
     blacklist_dict = {"no_names": json_list[0], "country": json_list[1], "languages": json_list[2],
                       "hobbies": json_list[3], "profession": json_list[4], "family": json_list[5],
                       "skis": json_list[6], "rifle": json_list[7], "ammunition": json_list[8],
                       "racesuit": json_list[9], "shoes": json_list[10], "bindings": json_list[11],
                       "skipoles": json_list[12], "gloves": json_list[13], "wax": json_list[14],
                       "goggles": json_list[15]}
-    json.dump(blacklist_dict, open('../Data/blacklist.json', 'w'))
+    try:
+        with open('../Data/blacklist.json', 'w') as f:
+            json.dump(blacklist_dict, f)
+    except IOError:
+        print("Please look into DataProcessing.biathlete set_json_lists")
 
 
 def get_connection():
     """This method returns a connection to the database Data/Biathlon_Data"""
+
     try:
         connection = sqlite3.connect("../Data/Biathlon_Data.db")
     except sqlite3.Error as error:
@@ -124,12 +144,10 @@ def get_connection():
     return connection
 
 
-def get_all_athletes(connection):
-    """This method gets the name of the athletes from the table 'Athlete' of the database
+def get_all_athletes():
+    """This method gets the name of the athletes from the table 'Athlete' of the database"""
 
-        Args:
-            connection: connection to the database
-    """
+    connection = get_connection()
     try:
         cursor = connection.cursor()
         sql_names_country = "SELECT name FROM Athlete"
@@ -141,23 +159,31 @@ def get_all_athletes(connection):
         return name_column
     except sqlite3.Error as error:
         print("Failed to read data from table Athlete", error)
-    finally:
-        return name_column
+        return None
 
 
-def create_athlete(athlete_name, connection):
+def create_athlete(athlete_name):
     """This method creates a new athlete tuple/row in the database (table = Athlete)
 
         Args:
             athlete_name (str): name of the athlete
-            connection: connection to the database
     """
+    if not isinstance(athlete_name, str):
+        raise TypeError
+
     print("This is the athlete's name we want to create: ", athlete_name)
+    connection = get_connection()
 
     # json values
-    no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
-    shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists('../Data/blacklist.json')
+    try:
+        no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
+        shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists()
+    except TypeError:
+        print("This should work to create an athlete. Please look into get_json_lists()")
+        return
 
+    # input of an athlete's data
+    print("Please insert STOP if you misspelled an input before")
     print("Please try to use same names for same/similar things. If data is not existing"
           " use NULL")
     birthdate_inp = input('Please enter the birthdate (in YYYY-MM-DD as string): ')
@@ -228,20 +254,36 @@ def create_athlete(athlete_name, connection):
             break
         except ValueError:
             print("Size and weight have to be integers! Please try again.")
+            create_athlete(athlete_name)  # try again
+            return
 
     current_ls = [country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit,
                   shoes, bindings, skipoles, gloves, wax, goggles]
     update_ls = [country_inp, languages_inp, hobbies_inp, profession_inp, family_inp, skis_inp,
                  rifle_inp, ammunition_inp, racesuit_inp, shoes_inp, bindings_inp, skipoles_inp,
                  gloves_inp, wax_inp, goggles_inp]
+
+    for stop in update_ls:
+        if type(stop) == list:
+            if "STOP" in stop:
+                print("Please try again")
+                create_athlete(athlete_name)
+                return
+        elif stop == "STOP":
+            create_athlete(athlete_name)
+            return
+
+    # replace 'NULL' values with None
     for cur, upd in zip(current_ls, update_ls):
         if type(upd) == list and len(upd) > 0:  # upd is a list
             if upd[0] == "NULL":
-                upd = "NULL"
+                upd = None
             for i in upd:
                 if i not in cur:
                     cur.append(i)
         else:  # upd is a string
+            if upd == "NULL":
+                upd = None
             if upd not in cur:
                 cur.append(upd)
 
@@ -272,21 +314,24 @@ def update_athlete_db(text_ls):
         Args:
             text_ls (str list): text of a pdf document
     """
+    if not isinstance(text_ls, list):
+        raise TypeError
+
     connection = get_connection()
     for text in text_ls:
 
         # json values
         no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
-        shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists('../Data/blacklist.json')
+        shoes, bindings, skipoles, gloves, wax, goggles = get_json_lists()
 
-        # if text is in the list which are no names text can be skipped
+        # if text is in the list of no_names text can be skipped
         if text in no_names:
             continue
 
         # !!! Athlete with same names will have the same "ID". We will separate two different athletes
         # with the same name later through tests.
         # This could cause a mistake in the database !!!!!!!!!!!!!
-        athlete_names = get_all_athletes(connection)
+        athlete_names = get_all_athletes()
         if text in athlete_names:
             continue
 
@@ -296,9 +341,9 @@ def update_athlete_db(text_ls):
                 break
         else:
             print(text)
-            inp = input("Please decide if this is a name(=y for YES) or not (=n for NO): ")
+            inp = input("Please decide if this is a name(=y for YES) or not (else): ")
             if inp == "y":
-                create_athlete(text, connection)
+                create_athlete(text)
             else:  # adds text to the list of no_names
                 no_names.append(text)
                 current_ls = [no_names, country, languages, hobbies, profession, family, skis, rifle,

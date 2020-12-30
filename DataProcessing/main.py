@@ -4,7 +4,8 @@ import os
 from DataProcessing import converting_data as cd, extracting_data as ed, biathlete as ba
 
 
-ba.create_json_and_db()
+#ba.create_json_and_db()
+
 
 def transform_data(path, organisation):
     """This method transform data from pdf to BiathlonData object -> 'main method'
@@ -89,4 +90,5 @@ print(len(biathlon_data) - len(joined_biathlon))
 print()
 # transform_data(r"C:\Users\Michael\Downloads")
 # transform_data(r"E:\Biathlon 010203")
+
 

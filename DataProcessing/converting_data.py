@@ -19,9 +19,17 @@ def convert_pdf_to_document(file_list):
         Returns:
             list of 'Document' objects associated to the file names
     """
+    if not isinstance(file_list, list):
+        raise TypeError
+
     doc_ls = []
+
     for filename in file_list:
-        doc_ls.append(fitz.open(filename))
+        if not isinstance(filename, str):
+            raise TypeError
+        if not filename[-3:] == 'pdf':
+            raise FileExistsError
+        doc_ls.append(fitz.Document(filename))
     return doc_ls
 
 
@@ -34,6 +42,11 @@ def filter_doc(doc_ls):
             the input list with the condition that every object in the list is a pdf
             -> a document, which is not a pdf, will be rejected
     """
+    if not isinstance(doc_ls, list):
+        raise TypeError
+    for i in doc_ls:
+        if not isinstance(i, fitz.Document):
+            raise TypeError
     return [doc for doc in doc_ls if doc.isPDF]
 
 
@@ -46,6 +59,11 @@ def is_not_pdf(doc_ls):
             the input list with the condition that every object in the list is not a pdf
             -> a document, which is a pdf, will be rejected
     """
+    if not isinstance(doc_ls, list):
+        raise TypeError
+    for i in doc_ls:
+        if not isinstance(i, fitz.Document):
+            raise TypeError
     return [doc for doc in doc_ls if (not doc.isPDF)]
 
 
@@ -59,8 +77,10 @@ def divide_into_pages(pdf_doc):
 
         - For more information about the page class: https://pymupdf.readthedocs.io/en/latest/page.html
     """
+    if not isinstance(pdf_doc, fitz.Document):
+        raise TypeError
     if not pdf_doc.isPDF:
-        raise Exception  # muss ixh mir noch überlegen
+        raise TypeError
 
     pages = []
     for i in range(pdf_doc.pageCount):
@@ -69,54 +89,49 @@ def divide_into_pages(pdf_doc):
     return pages
 
 
-def from_celsius_to_float(ls):
-    """This method transforms a string (degree in celsius) list into a float list"""
-    a = []
-    for n in ls:
-        n_ls = n.split("°")
+def from_one_unity_to_float(unity_ls, sep):
+    """This method transforms a string (degree in celsius) list into a float list
+
+        Args:
+            unity_ls (str list): list with strings with celsius-in-degree values
+            sep: separator for the string split
+    """
+    float_ls = []
+    if not isinstance(unity_ls, list):
+        raise TypeError
+    if not isinstance(sep, str):
+        raise TypeError
+    for elem in unity_ls:
+        if not isinstance(elem, str):
+            raise TypeError
+        if sep not in elem:
+            raise TypeError
+        n_ls = elem.split(sep)
         temp = re.compile(r'-?[0-9]{1,2}[.,][0-9]{1,2}')
         matches = [elem for elem in n_ls if temp.match(elem)]
-        if len(matches) > 1:
-            print('Something is really wrong. This should not happen')
-            raise Exception
+        if not len(matches) == 1:
+            print('This should not happen', "Please look into from_one_unity_to_float")
+            raise TypeError
         else:
             matches_str = "".join(matches)  # convert list to string
             matches_str = matches_str.replace(" ", "")
             matches_str = matches_str.replace(",", ".")
-            matches_float = float(matches_str)  # possible ValueError, Exception
+            matches_float = float(matches_str)
         if matches:
-            a.append(matches_float)
+            float_ls.append(matches_float)
         else:
-            print("This should not happen. Please look into from_celsius_to_float(weather_ls)")
-            break
-    return a
-
-
-def from_meter_per_s_to_float(ls):
-    """This method transforms a string (meter per second) list into a float list"""
-    a = []
-    for n in ls:
-        n_ls = n.split(" ")
-        temp = re.compile(r'[0-9]{1,2}[.,][0-9]{1,2}')
-        matches = [elem for elem in n_ls if temp.match(elem)]
-        if len(matches) > 1:
-            print('Something is really wrong. This should not happen')
-            raise Exception
-        else:
-            matches_str = "".join(matches)  # convert list to string
-            matches_str = matches_str.replace(",", ".")
-            matches_float = float(matches_str)  # possible ValueError, Exception
-        if matches:
-            a.append(matches_float)
-        else:
-            print("This should not happen. Please look into from_meter_per_s_to_float(weather_ls):")
-            break
-    return a
+            print("This should not happen. Please look into from_one_unity_to_float")
+            raise TypeError
+    return float_ls
 
 
 def eliminating_leading_zero(number_as_string):
     """This method eliminates leading zeros of a string of max. length 2"""
-    if number_as_string[0] == 0:
+    if not isinstance(number_as_string, str):
+        raise TypeError
+    if len(number_as_string) == 0:
+        raise TypeError
+    if number_as_string[0] == '0':
         return number_as_string[1:]
     return number_as_string
 
@@ -148,3 +163,7 @@ def get_time(str_time):
 
         except ValueError:
             print("This should not happen. Please look into get_time()")
+
+if __name__ == "__main__":
+    pass
+

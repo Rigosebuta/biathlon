@@ -102,7 +102,7 @@ def get_json_lists():
             wax = blacklist_dict["wax"]
             goggles = blacklist_dict["goggles"]
         return no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, \
-                racesuit, shoes, bindings, skipoles, gloves, wax, goggles
+               racesuit, shoes, bindings, skipoles, gloves, wax, goggles
     except IOError:
         print("Please look into DataProcessing.biathlete get_json_lists()")
 
@@ -276,14 +276,10 @@ def create_athlete(athlete_name):
     # replace 'NULL' values with None
     for cur, upd in zip(current_ls, update_ls):
         if type(upd) == list and len(upd) > 0:  # upd is a list
-            if upd[0] == "NULL":
-                upd = None
             for i in upd:
                 if i not in cur:
                     cur.append(i)
         else:  # upd is a string
-            if upd == "NULL":
-                upd = None
             if upd not in cur:
                 cur.append(upd)
 
@@ -313,12 +309,18 @@ def update_athlete_db(text_ls):
 
         Args:
             text_ls (str list): text of a pdf document
+
+        Returns:
+            index_list (integer list): indices in text_ls which point to a name of a biathlete
     """
     if not isinstance(text_ls, list):
         raise TypeError
-
+    for j in text_ls:
+        if not isinstance(j, str):
+            raise TypeError
+    index_list = []
     connection = get_connection()
-    for text in text_ls:
+    for index, text in enumerate(text_ls):
 
         # json values
         no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
@@ -333,6 +335,7 @@ def update_athlete_db(text_ls):
         # This could cause a mistake in the database !!!!!!!!!!!!!
         athlete_names = get_all_athletes()
         if text in athlete_names:
+            index_list.append(index)
             continue
 
         # go to next element in text_ls because a name of an athlete has no integers
@@ -343,6 +346,7 @@ def update_athlete_db(text_ls):
             print(text)
             inp = input("Please decide if this is a name(=y for YES) or not (else): ")
             if inp == "y":
+                index_list.append(index)
                 create_athlete(text)
             else:  # adds text to the list of no_names
                 no_names.append(text)
@@ -350,3 +354,4 @@ def update_athlete_db(text_ls):
                               ammunition, racesuit, shoes, bindings, skipoles, gloves, wax, goggles]
                 set_json_lists(current_ls)
     connection.close()
+    return index_list

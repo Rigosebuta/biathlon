@@ -73,20 +73,34 @@ def test_set_json_lists_index_error():
         ba.set_json_lists([[], ["2"]])
 
 
-def test_set_json_lists_type_error():
-    """This method tests the method set_json_lists() with a case which invokes a TypeError"""
+@pytest.mark.parametrize("type_error_set_json", [
+    None,
+    ["not_a_list", [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+    [1, [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+    [1.5, [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+    [{}, [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+])
+def test_set_json_lists_type_error(type_error_set_json):
+    """This method tests the method set_json_lists() with cases which invoke a TypeError"""
     ba.create_json_and_db()  # empty dictionary
     with pytest.raises(TypeError):
-        ba.set_json_lists(["not_a_list", [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
+        ba.set_json_lists(type_error_set_json)
 
 
-def test_create_athlete():
-    """This method tests the method create_athlete() with a case which invokes a TypeError"""
+@pytest.mark.parametrize("type_error_create_athlete", [
+    None, 1, 0, 1.5, [], {}
+])
+def test_create_athlete(type_error_create_athlete):
+    """This method tests the method create_athlete() with cases which invoke a TypeError"""
     with pytest.raises(TypeError):
-        ba.create_athlete(1)
+        ba.create_athlete(type_error_create_athlete)
 
 
-def test_update_athlete_db():
-    """This method tests the method update_athlete_db() with a case which invokes a TypeError"""
+@pytest.mark.parametrize("type_error_update_db", [
+    None, 1, 0, 1.5, [1, 2, 3], {}, ["Hi", 1, "Bye"]
+])
+def test_update_athlete_db_1(type_error_update_db):
+    """This method tests the method update_athlete_db() with cases which invoke a TypeError"""
     with pytest.raises(TypeError):
-        ba.update_athlete_db(1)
+        ba.update_athlete_db(type_error_update_db)
+

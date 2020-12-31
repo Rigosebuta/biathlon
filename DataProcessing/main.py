@@ -3,12 +3,8 @@ import os
 
 from DataProcessing import converting_data as cd, extracting_data as ed, biathlete as ba
 
-
-#ba.create_json_and_db()
-
-
 def transform_data(path, organisation):
-    """This method transform data from pdf to BiathlonData object -> 'main method'
+    """This method transform data from pdf to BiathlonData object
 
         Args:
             path (str): path of the documents whose data will be extracted
@@ -16,6 +12,11 @@ def transform_data(path, organisation):
             -> the organisation cannot be extracted from the pdf and has to be specified
 
     """
+    if not isinstance(path, str):
+        raise TypeError
+    if not isinstance(organisation, str):
+        raise TypeError
+
     # filter by file extension 'pdf'
     documents = []
     for i in os.listdir(path):
@@ -34,6 +35,7 @@ def transform_data(path, organisation):
                             "(especially the PyMuPDF package) doesn't work properly")
         raise Exception  # !!!!!!!!!!!!!!!!!!!!!!!!!
 
+    # if wrong 'organisation' input
     while organisation not in ['IBU CUP', 'WORLD CUP', 'OLYMPIC GAMES',
                                'WORLD CHAMPIONSHIPS', 'IBU JUNIOR CUP']:
         organisation = input('Please enter the organisation: (IBU CUP, WORLD CUP, OLYMPIC GAMES, '
@@ -80,15 +82,26 @@ def join_same_races(biathlon_data_ls):  # works only if everything else in extra
             complete.metadata['total_course_length'] is not None]
 
 
-biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\TestData', "WORLD CUP")
-print(biathlon_data)
-joined_biathlon = join_same_races(biathlon_data)
-print(joined_biathlon)
-print((len(biathlon_data)))
-print(len(joined_biathlon))
-print(len(biathlon_data) - len(joined_biathlon))
-print()
-# transform_data(r"C:\Users\Michael\Downloads")
-# transform_data(r"E:\Biathlon 010203")
+def main():
+    """Data is accessible through https://biathlonresults.com. For getting usable data only use
+    Start List, Competition Analysis and Competition Data Summary and only if they all exist"""
+
+    ba.create_json_and_db()
+
+    biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\TestData', "WORLD CUP")
+    print(biathlon_data)
+    joined_biathlon = join_same_races(biathlon_data)
+    print(joined_biathlon)
+    print((len(biathlon_data)))
+    print(len(joined_biathlon))
+    print(len(biathlon_data) - len(joined_biathlon))
+    print()
+    #world_cup_2006_2007 = transform_data(r"C:\Users\Michael\Downloads")
+    # transform_data(r"E:\Biathlon 010203")
+
+    # data from external hard disk
+    #transform_data(r"E:\Biathlon 010203", "WORLD CUP")...
 
 
+if __name__ == "__main__":
+    main()

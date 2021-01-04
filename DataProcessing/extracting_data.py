@@ -525,13 +525,18 @@ class BiathlonData:
             if index_athlete >= minimum_limit:
                 in_evaluation = index_list[:k]
                 out_of_evaluation = index_list[k:]
+                break
+
         j = 0
         for elem in in_evaluation:
+
+
+
             # print(self.data.to_string())
             # print(self.data.iloc[0, j])
             # name
 
-            pandas.to_timedelta!!!!!!!!!! für transformation
+            # pandas.to_timedelta!!!!!!!!!! für transformation
             name = text_ls[elem]
             self.data.iat[j, 0] = name
 
@@ -811,15 +816,17 @@ class BiathlonData:
             self.data.iat[j, 88] = course_time_overall_rank
             # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
             # GESAMT PENALTY TIME = EINFACH ADDDIEREN
-        j += 1
+            j += 1
         # OUT OF EVALUATION
 
-
     def pursuit_data(self, text_ls, index_list, minimum_limit):
+        """This method extracts specific race data from a biathlete of a PURSUIT race (e.g. interim times)"""
+
         for k, index_athlete in enumerate(index_list):
             if index_athlete >= minimum_limit:
                 in_evaluation = index_list[:k]
-                out_of_evaluation = index_list[k:]
+                #out_of_evaluation = index_list[k:]
+                break
         j = 0
         for elem in in_evaluation:
             # print(self.data.to_string())
@@ -834,11 +841,12 @@ class BiathlonData:
 
             # total misses
             total_misses = text_ls[elem + 2]
-            self.data.iat[j, 2] = total_misses
+            self.data.iat[j, 2] = int(total_misses)
 
+            # pandas.to_timedelta!!!!!!!!!! für transformation
             # overall time
             overall_time = text_ls[elem + 3]
-            # !!!
+            #overall_time = pd.to_timedelta()
             self.data.iat[j, 3] = overall_time
 
             # overall time behind
@@ -847,9 +855,8 @@ class BiathlonData:
             self.data.iat[j, 4] = overall_time_behind
 
             # overall rank
-            overall_rank = text_ls[elem + 5]
-            # !!!
-            self.data.iat[j, 5] = overall_rank
+            overall_rank = text_ls[elem + 5].replace('=', "")
+            self.data.iat[j, 5] = int(overall_rank)
 
             # cumulative time loop 1
             cumulative_time_loop_1 = text_ls[elem + 7]
@@ -862,9 +869,8 @@ class BiathlonData:
             self.data.iat[j, 7] = cumulative_time_loop_1_behind
 
             # cumulative time loop 1 rank
-            cumulative_time_loop_1_rank = text_ls[elem + 9]
-            # !!!
-            self.data.iat[j, 8] = cumulative_time_loop_1_rank
+            cumulative_time_loop_1_rank = text_ls[elem + 9].replace('=', "")
+            self.data.iat[j, 8] = int(cumulative_time_loop_1_rank)
 
             # cumulative time loop 2
             cumulative_time_loop_2 = text_ls[elem + 10]
@@ -877,9 +883,8 @@ class BiathlonData:
             self.data.iat[j, 10] = cumulative_time_loop_2_behind
 
             # cumulative time loop 2 rank
-            cumulative_time_loop_2_rank = text_ls[elem + 12]
-            # !!!
-            self.data.iat[j, 11] = cumulative_time_loop_2_rank
+            cumulative_time_loop_2_rank = text_ls[elem + 12].replace('=', "")
+            self.data.iat[j, 11] = int(cumulative_time_loop_2_rank)
 
             # cumulative time loop 3
             cumulative_time_loop_3 = text_ls[elem + 13]
@@ -892,9 +897,8 @@ class BiathlonData:
             self.data.iat[j, 13] = cumulative_time_loop_3_behind
 
             # cumulative time loop 3 rank
-            cumulative_time_loop_3_rank = text_ls[elem + 15]
-            # !!!
-            self.data.iat[j, 14] = cumulative_time_loop_3_rank
+            cumulative_time_loop_3_rank = text_ls[elem + 15].replace('=', "")
+            self.data.iat[j, 14] = int(cumulative_time_loop_3_rank)
 
             # cumulative time loop 4
             cumulative_time_loop_4 = text_ls[elem + 16]
@@ -907,9 +911,8 @@ class BiathlonData:
             self.data.iat[j, 16] = cumulative_time_loop_4_behind
 
             # cumulative time loop 4 rank
-            cumulative_time_loop_4_rank = text_ls[elem + 18]
-            # !!!
-            self.data.iat[j, 17] = cumulative_time_loop_4_rank
+            cumulative_time_loop_4_rank = text_ls[elem + 18].replace('=', "")
+            self.data.iat[j, 17] = int(cumulative_time_loop_4_rank)
 
             # cumulative time overall
             cumulative_time_overall = text_ls[elem + 19]
@@ -922,9 +925,8 @@ class BiathlonData:
             self.data.iat[j, 19] = cumulative_time_overall_behind
 
             # cumulative time overall rank
-            cumulative_time_overall_rank = text_ls[elem + 21]
-            # !!!
-            self.data.iat[j, 20] = cumulative_time_overall_rank
+            cumulative_time_overall_rank = text_ls[elem + 21].replace('=', "")
+            self.data.iat[j, 20] = int(cumulative_time_overall_rank)
 
             # loop time 1
             loop_time_1 = text_ls[elem + 23]
@@ -937,9 +939,8 @@ class BiathlonData:
             self.data.iat[j, 22] = loop_time_1_behind
 
             # loop time 1 rank
-            loop_time_1_rank = text_ls[elem + 25]
-            # !!!
-            self.data.iat[j, 23] = loop_time_1_rank
+            loop_time_1_rank = text_ls[elem + 25].replace('=', "")
+            self.data.iat[j, 23] = int(loop_time_1_rank)
 
             # loop time 2
             loop_time_2 = text_ls[elem + 26]
@@ -952,9 +953,8 @@ class BiathlonData:
             self.data.iat[j, 25] = loop_time_2_behind
 
             # loop time 2 rank
-            loop_time_2_rank = text_ls[elem + 28]
-            # !!!
-            self.data.iat[j, 26] = loop_time_2_rank
+            loop_time_2_rank = text_ls[elem + 28].replace('=', "")
+            self.data.iat[j, 26] = int(loop_time_2_rank)
 
             # loop time 3
             loop_time_3 = text_ls[elem + 29]
@@ -967,9 +967,8 @@ class BiathlonData:
             self.data.iat[j, 28] = loop_time_3_behind
 
             # loop time 3 rank
-            loop_time_3_rank = text_ls[elem + 31]
-            # !!!
-            self.data.iat[j, 29] = loop_time_3_rank
+            loop_time_3_rank = text_ls[elem + 31].replace('=', "")
+            self.data.iat[j, 29] = int(loop_time_3_rank)
 
             # loop time 4
             loop_time_4 = text_ls[elem + 32]
@@ -982,9 +981,8 @@ class BiathlonData:
             self.data.iat[j, 31] = loop_time_4_behind
 
             # loop time 4 rank
-            loop_time_4_rank = text_ls[elem + 34]
-            # !!!
-            self.data.iat[j, 32] = loop_time_4_rank
+            loop_time_4_rank = text_ls[elem + 34].replace('=', "")
+            self.data.iat[j, 32] = int(loop_time_4_rank)
 
             # loop time 5
             loop_time_5 = text_ls[elem + 35]
@@ -997,13 +995,12 @@ class BiathlonData:
             self.data.iat[j, 34] = loop_time_5_behind
 
             # loop time 5 rank
-            loop_time_5_rank = text_ls[elem + 37]
-            # !!!
-            self.data.iat[j, 35] = loop_time_5_rank
+            loop_time_5_rank = text_ls[elem + 37].replace('=', "")
+            self.data.iat[j, 35] = int(loop_time_5_rank)
 
             # shooting misses loop 1
             shooting_misses_1 = text_ls[elem + 39]
-            self.data.iat[j, 36] = shooting_misses_1
+            self.data.iat[j, 36] = int(shooting_misses_1)
 
             # shooting time 1
             shooting_time_1 = text_ls[elem + 40]
@@ -1016,13 +1013,13 @@ class BiathlonData:
             self.data.iat[j, 38] = shooting_time_loop_1_behind
 
             # shooting time loop 1 rank
-            shooting_time_loop_1_rank = text_ls[elem + 42]
+            shooting_time_loop_1_rank = text_ls[elem + 42].replace('=', "")
             # !!!
-            self.data.iat[j, 39] = shooting_time_loop_1_rank
+            self.data.iat[j, 39] = int(shooting_time_loop_1_rank)
 
             # shooting misses loop 2
             shooting_misses_2 = text_ls[elem + 43]
-            self.data.iat[j, 40] = shooting_misses_2
+            self.data.iat[j, 40] = int(shooting_misses_2)
 
             # shooting loop time 2
             shooting_loop_time_2 = text_ls[elem + 44]
@@ -1035,13 +1032,12 @@ class BiathlonData:
             self.data.iat[j, 42] = shooting_loop_time_2_behind
 
             # shooting loop time 2 rank
-            shooting_loop_time_2_rank = text_ls[elem + 46]
-            # !!!
-            self.data.iat[j, 43] = shooting_loop_time_2_rank
+            shooting_loop_time_2_rank = text_ls[elem + 46].replace('=', "")
+            self.data.iat[j, 43] = int(shooting_loop_time_2_rank)
 
             # shooting misses loop 3
             shooting_misses_3 = text_ls[elem + 47]
-            self.data.iat[j, 44] = shooting_misses_3
+            self.data.iat[j, 44] = int(shooting_misses_3)
 
             # shooting loop time 3
             shooting_loop_time_3 = text_ls[elem + 48]
@@ -1054,13 +1050,13 @@ class BiathlonData:
             self.data.iat[j, 46] = shooting_loop_time_3_behind
 
             # shooting loop time 3 rank
-            shooting_loop_time_3_rank = text_ls[elem + 50]
+            shooting_loop_time_3_rank = text_ls[elem + 50].replace('=', "")
             # !!!
-            self.data.iat[j, 47] = shooting_loop_time_3_rank
+            self.data.iat[j, 47] = int(shooting_loop_time_3_rank)
 
             # shooting misses loop 4
             shooting_misses_4 = text_ls[elem + 51]
-            self.data.iat[j, 48] = shooting_misses_4
+            self.data.iat[j, 48] = int(shooting_misses_4)
 
             # shooting loop time 4
             shooting_loop_time_4 = text_ls[elem + 52]
@@ -1073,13 +1069,12 @@ class BiathlonData:
             self.data.iat[j, 50] = shooting_loop_time_4_behind
 
             # shooting loop time 4 rank
-            shooting_loop_time_4_rank = text_ls[elem + 54]
-            # !!!
-            self.data.iat[j, 51] = shooting_loop_time_4_rank
+            shooting_loop_time_4_rank = text_ls[elem + 54].replace('=', "")
+            self.data.iat[j, 51] = int(shooting_loop_time_4_rank)
 
             # shooting misses overall
             shooting_misses_overall = text_ls[elem + 55]
-            self.data.iat[j, 52] = shooting_misses_overall
+            self.data.iat[j, 52] = int(shooting_misses_overall)
 
             # shooting time overall
             shooting_time_overall = text_ls[elem + 56]
@@ -1092,9 +1087,9 @@ class BiathlonData:
             self.data.iat[j, 54] = shooting_time_overall_behind
 
             # shooting time overall rank
-            shooting_time_overall_rank = text_ls[elem + 58]
+            shooting_time_overall_rank = text_ls[elem + 58].replace('=', "")
             # !!!
-            self.data.iat[j, 55] = shooting_time_overall_rank
+            self.data.iat[j, 55] = int(shooting_time_overall_rank)
 
             # range time loop 1
             range_time_loop_1 = text_ls[elem + 60]
@@ -1107,9 +1102,9 @@ class BiathlonData:
             self.data.iat[j, 57] = range_time_loop_1_behind
 
             # range time loop 1 rank
-            range_time_loop_1_rank = text_ls[elem + 62]
+            range_time_loop_1_rank = text_ls[elem + 62].replace('=', "")
             # !!!
-            self.data.iat[j, 58] = range_time_loop_1_rank
+            self.data.iat[j, 58] = int(range_time_loop_1_rank)
 
             # range time loop 2
             range_time_loop_2 = text_ls[elem + 63]
@@ -1122,9 +1117,9 @@ class BiathlonData:
             self.data.iat[j, 60] = range_time_loop_2_behind
 
             # range time loop 2 rank
-            range_time_loop_2_rank = text_ls[elem + 65]
+            range_time_loop_2_rank = text_ls[elem + 65].replace('=', "")
             # !!!
-            self.data.iat[j, 61] = range_time_loop_2_rank
+            self.data.iat[j, 61] = int(range_time_loop_2_rank)
 
             # range time loop 3
             range_time_loop_3 = text_ls[elem + 66]
@@ -1137,9 +1132,8 @@ class BiathlonData:
             self.data.iat[j, 63] = range_time_loop_3_behind
 
             # range time loop 3 rank
-            range_time_loop_3_rank = text_ls[elem + 68]
-            # !!!
-            self.data.iat[j, 64] = range_time_loop_3_rank
+            range_time_loop_3_rank = text_ls[elem + 68].replace('=', "")
+            self.data.iat[j, 64] = int(range_time_loop_3_rank)
 
             # range time loop 4
             range_time_loop_4 = text_ls[elem + 69]
@@ -1152,9 +1146,9 @@ class BiathlonData:
             self.data.iat[j, 66] = range_time_loop_4_behind
 
             # range time loop 4 rank
-            range_time_loop_4_rank = text_ls[elem + 71]
+            range_time_loop_4_rank = text_ls[elem + 71].replace('=', "")
             # !!!
-            self.data.iat[j, 67] = range_time_loop_4_rank
+            self.data.iat[j, 67] = int(range_time_loop_4_rank)
 
             # range time overall
             range_time_overall = text_ls[elem + 72]
@@ -1167,9 +1161,8 @@ class BiathlonData:
             self.data.iat[j, 69] = range_time_overall_behind
 
             # range time overall rank
-            range_time_overall_rank = text_ls[elem + 74]
-            # !!!
-            self.data.iat[j, 70] = range_time_overall_rank
+            range_time_overall_rank = text_ls[elem + 74].replace('=', "")
+            self.data.iat[j, 70] = int(range_time_overall_rank)
 
             # course time loop 1
             course_time_loop_1 = text_ls[elem + 76]
@@ -1182,9 +1175,8 @@ class BiathlonData:
             self.data.iat[j, 72] = course_time_loop_1_behind
 
             # course time loop 1 rank
-            course_time_loop_1_rank = text_ls[elem + 78]
-            # !!!
-            self.data.iat[j, 73] = course_time_loop_1_rank
+            course_time_loop_1_rank = text_ls[elem + 78].replace('=', "")
+            self.data.iat[j, 73] = int(course_time_loop_1_rank)
 
             # course time loop 2
             course_time_loop_2 = text_ls[elem + 79]
@@ -1197,9 +1189,8 @@ class BiathlonData:
             self.data.iat[j, 75] = course_time_loop_2_behind
 
             # course time loop 2 rank
-            course_time_loop_2_rank = text_ls[elem + 81]
-            # !!!
-            self.data.iat[j, 76] = course_time_loop_2_rank
+            course_time_loop_2_rank = text_ls[elem + 81].replace('=', "")
+            self.data.iat[j, 76] = int(course_time_loop_2_rank)
 
             # course time loop 3
             course_time_loop_3 = text_ls[elem + 82]
@@ -1212,9 +1203,8 @@ class BiathlonData:
             self.data.iat[j, 78] = course_time_loop_3_behind
 
             # course time loop 3 rank
-            course_time_loop_3_rank = text_ls[elem + 84]
-            # !!!
-            self.data.iat[j, 79] = course_time_loop_3_rank
+            course_time_loop_3_rank = text_ls[elem + 84].replace('=', "")
+            self.data.iat[j, 79] = int(course_time_loop_3_rank)
 
             # course time loop 4
             course_time_loop_4 = text_ls[elem + 85]
@@ -1227,9 +1217,8 @@ class BiathlonData:
             self.data.iat[j, 81] = course_time_loop_4_behind
 
             # course time loop 4 rank
-            course_time_loop_4_rank = text_ls[elem + 87]
-            # !!!
-            self.data.iat[j, 82] = course_time_loop_4_rank
+            course_time_loop_4_rank = text_ls[elem + 87].replace('=', "")
+            self.data.iat[j, 82] = int(course_time_loop_4_rank)
 
             # course time loop 5
             course_time_loop_5 = text_ls[elem + 88]
@@ -1242,9 +1231,8 @@ class BiathlonData:
             self.data.iat[j, 84] = course_time_loop_5_behind
 
             # course time loop 5 rank
-            course_time_loop_5_rank = text_ls[elem + 90]
-            # !!!
-            self.data.iat[j, 85] = course_time_loop_5_rank
+            course_time_loop_5_rank = text_ls[elem + 90].replace('=', "")
+            self.data.iat[j, 85] = int(course_time_loop_5_rank)
 
             # course time overall
             course_time_overall = text_ls[elem + 91]
@@ -1257,9 +1245,8 @@ class BiathlonData:
             self.data.iat[j, 87] = course_time_overall_behind
 
             # course time overall rank
-            course_time_overall_rank = text_ls[elem + 93]
-            # !!!
-            self.data.iat[j, 88] = course_time_overall_rank
+            course_time_overall_rank = text_ls[elem + 93].replace('=', "")
+            self.data.iat[j, 88] = int(course_time_overall_rank)
             # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
             # GESAMT PENALTY TIME = EINFACH ADDDIEREN
             # penalty_loop_1
@@ -1287,6 +1274,7 @@ class BiathlonData:
             # !!!
             # self.data.iat[j, 93] = penalty_loop_overall
             j += 1
+        self.data = self.data.dropna(axis=0, how='all', thresh=None, subset=None, inplace=False)
 
     def get_data(self):
         """This method extracts specific race data from every biathlete (e.g. interim times, loop times)"""
@@ -1304,21 +1292,25 @@ class BiathlonData:
         # provoke an IndexError because e.g. disqualified athletes might not have done a second lap
         # Therefore there is a whitespace in the pdf and no readable element in text_ls
         did_not_start_pos = did_not_finish_pos = lapped_pos = jury_dec_pos = disqualified_pos = len(text_ls)
-        if 'Did not start' in text_ls:
-            did_not_start_pos = text_ls.index('Did not start')
-        if 'Did not finish' in text_ls:
-            did_not_start_pos = text_ls.index('Did not finish')
-        if 'Lapped' in text_ls:
-            did_not_start_pos = text_ls.index('Lapped')
-        if 'Jury Decisions' in text_ls:
-            jury_dec_pos = text_ls.index('Jury Decisions')
-        if 'Did not start' in text_ls:
-            did_not_start_pos = text_ls.index('Did not start')
-        if 'Disqualified' in text_ls:
-            disqualified_pos = text_ls.index('Disqualified')
+        for pos, elem in enumerate(text_ls):
+            if elem == 'Did not start':  # every keyword shouldn't occur more than once but BUGGGGG
+                if did_not_start_pos == len(text_ls):
+                    did_not_start_pos = pos
+            if elem == 'Did not finish':
+                if did_not_finish_pos == len(text_ls):
+                   did_not_finish_pos = pos
+            if elem == 'Lapped':
+                if lapped_pos == len(text_ls):
+                    lapped_pos = pos
+            if elem == 'Jury Decisions':
+                if jury_dec_pos == len(text_ls):
+                    jury_dec_pos = pos
+            if elem == 'Disqualified':
+                if disqualified_pos == len(text_ls):
+                    disqualified_pos = pos
         minimum_limit = min([did_not_finish_pos, did_not_start_pos, lapped_pos, jury_dec_pos, disqualified_pos])
 
-        number_of_biathletes = 200
+        number_of_biathletes = 150
         if self.metadata['number_of_entries'] is not None:
             number_of_biathletes = self.metadata['number_of_entries']
 
@@ -1376,7 +1368,7 @@ class BiathlonData:
             # ['SPRINT', 'PURSUIT', 'RELAY', 'INDIVIDUAL', 'MASS START', 'MIXED']
             elif self.metadata['race_type'] == 'SPRINT':
                 self.sprint_data(text_ls, index_list, minimum_limit)
-            elif self.metadata['race_type'] == 'PURSUIT': # massenstart sollte gleich sein
+            elif self.metadata['race_type'] == 'PURSUIT':  # massenstart sollte gleich sein
                 self.pursuit_data(text_ls, index_list, minimum_limit)
             elif self.metadata['race_type'] == 'RELAY':
                 pass
@@ -1386,9 +1378,6 @@ class BiathlonData:
                 pass
             elif self.metadata['race_type'] == 'MIXED':
                 pass
-
-
-
 
             # for h, column in enumerate(columns_list):
             #   self.data[column] = self.data[column].astype(types[h])
@@ -1431,6 +1420,6 @@ if __name__ == "__main__":
 
     # first = BiathlonData(pdf_doc_1, organisation)
     second = BiathlonData(pdf_doc_2, organisation)
-    print(second.metadata)
-    print(second.data.head())
+    #print(second.metadata)
+    #print(second.data.head())
     # third = BiathlonData(pdf_doc_3, organisation)

@@ -518,6 +518,776 @@ class BiathlonData:
                 wind_speed = cv.from_one_unity_to_float(weather_ls, " ")
                 self.metadata['wind_speed'] = wind_speed
 
+    def sprint_data(self, text_ls, index_list, minimum_limit):
+        """This method extracts specific race data from a biathlete of a SPRINT race (e.g. interim times)"""
+        # divide into a index list of athletes who finished the race properly and those who didn't
+        for k, index_athlete in enumerate(index_list):
+            if index_athlete >= minimum_limit:
+                in_evaluation = index_list[:k]
+                out_of_evaluation = index_list[k:]
+        j = 0
+        for elem in in_evaluation:
+            # print(self.data.to_string())
+            # print(self.data.iloc[0, j])
+            # name
+
+            pandas.to_timedelta!!!!!!!!!! für transformation
+            name = text_ls[elem]
+            self.data.iat[j, 0] = name
+
+            # country
+            country = text_ls[elem + 1]
+            self.data.iat[j, 1] = country
+
+            # total misses
+            total_misses = text_ls[elem + 2]
+            self.data.iat[j, 2] = total_misses
+
+            # overall time
+            overall_time = text_ls[elem + 3]
+            # !!!
+            self.data.iat[j, 3] = overall_time
+
+            # overall time behind
+            overall_time_behind = text_ls[elem + 4]
+            # !!!
+            self.data.iat[j, 4] = overall_time_behind
+
+            # overall rank
+            overall_rank = text_ls[elem + 5]
+            # !!!
+            self.data.iat[j, 5] = overall_rank
+
+            # cumulative time loop 1
+            cumulative_time_loop_1 = text_ls[elem + 7]
+            # !!!
+            self.data.iat[j, 6] = cumulative_time_loop_1
+
+            # cumulative time loop 1 behind
+            cumulative_time_loop_1_behind = text_ls[elem + 8]
+            # !!!
+            self.data.iat[j, 7] = cumulative_time_loop_1_behind
+
+            # cumulative time loop 1 rank
+            cumulative_time_loop_1_rank = text_ls[elem + 9]
+            # !!!
+            self.data.iat[j, 8] = cumulative_time_loop_1_rank
+
+            # cumulative time loop 2
+            cumulative_time_loop_2 = text_ls[elem + 10]
+            # !!!
+            self.data.iat[j, 9] = cumulative_time_loop_2
+
+            # cumulative time loop 2 behind
+            cumulative_time_loop_2_behind = text_ls[elem + 11]
+            # !!!
+            self.data.iat[j, 10] = cumulative_time_loop_2_behind
+
+            # cumulative time loop 2 rank
+            cumulative_time_loop_2_rank = text_ls[elem + 12]
+            # !!!
+            self.data.iat[j, 11] = cumulative_time_loop_2_rank
+
+            # cumulative time overall
+            cumulative_time_overall = text_ls[elem + 13]
+            # !!!
+            self.data.iat[j, 18] = cumulative_time_overall
+
+            # cumulative time overall behind
+            cumulative_time_overall_behind = text_ls[elem + 14]
+            # !!!
+            self.data.iat[j, 19] = cumulative_time_overall_behind
+
+            # cumulative time overall rank
+            cumulative_time_overall_rank = text_ls[elem + 15]
+            # !!!
+            self.data.iat[j, 20] = cumulative_time_overall_rank
+
+            # loop time 1
+            loop_time_1 = text_ls[elem + 17]
+            # !!!
+            self.data.iat[j, 21] = loop_time_1
+
+            # loop time 1 behind
+            loop_time_1_behind = text_ls[elem + 18]
+            # !!!
+            self.data.iat[j, 22] = loop_time_1_behind
+
+            # loop time 1 rank
+            loop_time_1_rank = text_ls[elem + 19]
+            # !!!
+            self.data.iat[j, 23] = loop_time_1_rank
+
+            # loop time 2
+            loop_time_2 = text_ls[elem + 20]
+            # !!!
+            self.data.iat[j, 24] = loop_time_2
+
+            # loop time 2 behind
+            loop_time_2_behind = text_ls[elem + 21]
+            # !!!
+            self.data.iat[j, 25] = loop_time_2_behind
+
+            # loop time 2 rank
+            loop_time_2_rank = text_ls[elem + 22]
+            # !!!
+            self.data.iat[j, 26] = loop_time_2_rank
+
+            # loop time 3
+            loop_time_3 = text_ls[elem + 23]
+            # !!!
+            self.data.iat[j, 27] = loop_time_3
+
+            # loop time 3 behind
+            loop_time_3_behind = text_ls[elem + 24]
+            # !!!
+            self.data.iat[j, 28] = loop_time_3_behind
+
+            # loop time 3 rank
+            loop_time_3_rank = text_ls[elem + 25]
+            # !!!
+            self.data.iat[j, 29] = loop_time_3_rank
+
+            # shooting misses loop 1
+            shooting_misses_1 = text_ls[elem + 27]
+            self.data.iat[j, 36] = shooting_misses_1
+
+            # shooting time 1
+            shooting_time_1 = text_ls[elem + 28]
+            # !!!
+            self.data.iat[j, 37] = shooting_time_1
+
+            # shooting time loop 1 behind
+            shooting_time_loop_1_behind = text_ls[elem + 29]
+            # !!!
+            self.data.iat[j, 38] = shooting_time_loop_1_behind
+
+            # shooting time loop 1 rank
+            shooting_time_loop_1_rank = text_ls[elem + 30]
+            # !!!
+            self.data.iat[j, 39] = shooting_time_loop_1_rank
+
+            # shooting misses loop 2
+            shooting_misses_2 = text_ls[elem + 31]
+            self.data.iat[j, 40] = shooting_misses_2
+
+            # shooting loop time 2
+            shooting_loop_time_2 = text_ls[elem + 32]
+            # !!!
+            self.data.iat[j, 41] = shooting_loop_time_2
+
+            # shooting loop time 2 behind
+            shooting_loop_time_2_behind = text_ls[elem + 33]
+            # !!!
+            self.data.iat[j, 42] = shooting_loop_time_2_behind
+
+            # shooting loop time 2 rank
+            shooting_loop_time_2_rank = text_ls[elem + 34]
+            # !!!
+            self.data.iat[j, 43] = shooting_loop_time_2_rank
+
+            # shooting misses overall
+            shooting_misses_overall = text_ls[elem + 35]
+            self.data.iat[j, 52] = shooting_misses_overall
+
+            # shooting time overall
+            shooting_time_overall = text_ls[elem + 36]
+            # !!!
+            self.data.iat[j, 53] = shooting_time_overall
+
+            # shooting time overall behind
+            shooting_time_overall_behind = text_ls[elem + 37]
+            # !!!
+            self.data.iat[j, 54] = shooting_time_overall_behind
+
+            # shooting time overall rank
+            shooting_time_overall_rank = text_ls[elem + 38]
+            # !!!
+            self.data.iat[j, 55] = shooting_time_overall_rank
+
+            # range time loop 1
+            range_time_loop_1 = text_ls[elem + 40]
+            # !!!
+            self.data.iat[j, 56] = range_time_loop_1
+
+            # range time loop 1 behind
+            range_time_loop_1_behind = text_ls[elem + 41]
+            # !!!
+            self.data.iat[j, 57] = range_time_loop_1_behind
+
+            # range time loop 1 rank
+            range_time_loop_1_rank = text_ls[elem + 42]
+            # !!!
+            self.data.iat[j, 58] = range_time_loop_1_rank
+
+            # range time loop 2
+            range_time_loop_2 = text_ls[elem + 43]
+            # !!!
+            self.data.iat[j, 59] = range_time_loop_2
+
+            # range time loop 2 behind
+            range_time_loop_2_behind = text_ls[elem + 44]
+            # !!!
+            self.data.iat[j, 60] = range_time_loop_2_behind
+
+            # range time loop 2 rank
+            range_time_loop_2_rank = text_ls[elem + 45]
+            # !!!
+            self.data.iat[j, 61] = range_time_loop_2_rank
+
+            # range time overall
+            range_time_overall = text_ls[elem + 46]
+            # !!!
+            self.data.iat[j, 68] = range_time_overall
+
+            # range time overall behind
+            range_time_overall_behind = text_ls[elem + 47]
+            # !!!
+            self.data.iat[j, 69] = range_time_overall_behind
+
+            # range time overall rank
+            range_time_overall_rank = text_ls[elem + 48]
+            # !!!
+            self.data.iat[j, 70] = range_time_overall_rank
+
+            # course time loop 1
+            course_time_loop_1 = text_ls[elem + 50]
+            # !!!
+            self.data.iat[j, 71] = course_time_loop_1
+
+            # course time loop 1 behind
+            course_time_loop_1_behind = text_ls[elem + 51]
+            # !!!
+            self.data.iat[j, 72] = course_time_loop_1_behind
+
+            # course time loop 1 rank
+            course_time_loop_1_rank = text_ls[elem + 52]
+            # !!!
+            self.data.iat[j, 73] = course_time_loop_1_rank
+
+            # course time loop 2
+            course_time_loop_2 = text_ls[elem + 53]
+            # !!!
+            self.data.iat[j, 74] = course_time_loop_2
+
+            # course time loop 2 behind
+            course_time_loop_2_behind = text_ls[elem + 54]
+            # !!!
+            self.data.iat[j, 75] = course_time_loop_2_behind
+
+            # course time loop 2 rank
+            course_time_loop_2_rank = text_ls[elem + 55]
+            # !!!
+            self.data.iat[j, 76] = course_time_loop_2_rank
+
+            # course time loop 3
+            course_time_loop_3 = text_ls[elem + 56]
+            # !!!
+            self.data.iat[j, 77] = course_time_loop_3
+
+            # course time loop 3 behind
+            course_time_loop_3_behind = text_ls[elem + 57]
+            # !!!
+            self.data.iat[j, 78] = course_time_loop_3_behind
+
+            # course time loop 3 rank
+            course_time_loop_3_rank = text_ls[elem + 58]
+            # !!!
+            self.data.iat[j, 79] = course_time_loop_3_rank
+
+            # course time overall
+            course_time_overall = text_ls[elem + 59]
+            # !!!
+            self.data.iat[j, 86] = course_time_overall
+
+            # course time overall behind
+            course_time_overall_behind = text_ls[elem + 60]
+            # !!!
+            self.data.iat[j, 87] = course_time_overall_behind
+
+            # course time overall rank
+            course_time_overall_rank = text_ls[elem + 61]
+            # !!!
+            self.data.iat[j, 88] = course_time_overall_rank
+            # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
+            # GESAMT PENALTY TIME = EINFACH ADDDIEREN
+        j += 1
+        # OUT OF EVALUATION
+
+
+    def pursuit_data(self, text_ls, index_list, minimum_limit):
+        for k, index_athlete in enumerate(index_list):
+            if index_athlete >= minimum_limit:
+                in_evaluation = index_list[:k]
+                out_of_evaluation = index_list[k:]
+        j = 0
+        for elem in in_evaluation:
+            # print(self.data.to_string())
+            # print(self.data.iloc[0, j])
+            # name
+            name = text_ls[elem]
+            self.data.iat[j, 0] = name
+
+            # country
+            country = text_ls[elem + 1]
+            self.data.iat[j, 1] = country
+
+            # total misses
+            total_misses = text_ls[elem + 2]
+            self.data.iat[j, 2] = total_misses
+
+            # overall time
+            overall_time = text_ls[elem + 3]
+            # !!!
+            self.data.iat[j, 3] = overall_time
+
+            # overall time behind
+            overall_time_behind = text_ls[elem + 4]
+            # !!!
+            self.data.iat[j, 4] = overall_time_behind
+
+            # overall rank
+            overall_rank = text_ls[elem + 5]
+            # !!!
+            self.data.iat[j, 5] = overall_rank
+
+            # cumulative time loop 1
+            cumulative_time_loop_1 = text_ls[elem + 7]
+            # !!!
+            self.data.iat[j, 6] = cumulative_time_loop_1
+
+            # cumulative time loop 1 behind
+            cumulative_time_loop_1_behind = text_ls[elem + 8]
+            # !!!
+            self.data.iat[j, 7] = cumulative_time_loop_1_behind
+
+            # cumulative time loop 1 rank
+            cumulative_time_loop_1_rank = text_ls[elem + 9]
+            # !!!
+            self.data.iat[j, 8] = cumulative_time_loop_1_rank
+
+            # cumulative time loop 2
+            cumulative_time_loop_2 = text_ls[elem + 10]
+            # !!!
+            self.data.iat[j, 9] = cumulative_time_loop_2
+
+            # cumulative time loop 2 behind
+            cumulative_time_loop_2_behind = text_ls[elem + 11]
+            # !!!
+            self.data.iat[j, 10] = cumulative_time_loop_2_behind
+
+            # cumulative time loop 2 rank
+            cumulative_time_loop_2_rank = text_ls[elem + 12]
+            # !!!
+            self.data.iat[j, 11] = cumulative_time_loop_2_rank
+
+            # cumulative time loop 3
+            cumulative_time_loop_3 = text_ls[elem + 13]
+            # !!!
+            self.data.iat[j, 12] = cumulative_time_loop_3
+
+            # cumulative time loop 3 behind
+            cumulative_time_loop_3_behind = text_ls[elem + 14]
+            # !!!
+            self.data.iat[j, 13] = cumulative_time_loop_3_behind
+
+            # cumulative time loop 3 rank
+            cumulative_time_loop_3_rank = text_ls[elem + 15]
+            # !!!
+            self.data.iat[j, 14] = cumulative_time_loop_3_rank
+
+            # cumulative time loop 4
+            cumulative_time_loop_4 = text_ls[elem + 16]
+            # !!!
+            self.data.iat[j, 15] = cumulative_time_loop_4
+
+            # cumulative time loop 4 behind
+            cumulative_time_loop_4_behind = text_ls[elem + 17]
+            # !!!
+            self.data.iat[j, 16] = cumulative_time_loop_4_behind
+
+            # cumulative time loop 4 rank
+            cumulative_time_loop_4_rank = text_ls[elem + 18]
+            # !!!
+            self.data.iat[j, 17] = cumulative_time_loop_4_rank
+
+            # cumulative time overall
+            cumulative_time_overall = text_ls[elem + 19]
+            # !!!
+            self.data.iat[j, 18] = cumulative_time_overall
+
+            # cumulative time overall behind
+            cumulative_time_overall_behind = text_ls[elem + 20]
+            # !!!
+            self.data.iat[j, 19] = cumulative_time_overall_behind
+
+            # cumulative time overall rank
+            cumulative_time_overall_rank = text_ls[elem + 21]
+            # !!!
+            self.data.iat[j, 20] = cumulative_time_overall_rank
+
+            # loop time 1
+            loop_time_1 = text_ls[elem + 23]
+            # !!!
+            self.data.iat[j, 21] = loop_time_1
+
+            # loop time 1 behind
+            loop_time_1_behind = text_ls[elem + 24]
+            # !!!
+            self.data.iat[j, 22] = loop_time_1_behind
+
+            # loop time 1 rank
+            loop_time_1_rank = text_ls[elem + 25]
+            # !!!
+            self.data.iat[j, 23] = loop_time_1_rank
+
+            # loop time 2
+            loop_time_2 = text_ls[elem + 26]
+            # !!!
+            self.data.iat[j, 24] = loop_time_2
+
+            # loop time 2 behind
+            loop_time_2_behind = text_ls[elem + 27]
+            # !!!
+            self.data.iat[j, 25] = loop_time_2_behind
+
+            # loop time 2 rank
+            loop_time_2_rank = text_ls[elem + 28]
+            # !!!
+            self.data.iat[j, 26] = loop_time_2_rank
+
+            # loop time 3
+            loop_time_3 = text_ls[elem + 29]
+            # !!!
+            self.data.iat[j, 27] = loop_time_3
+
+            # loop time 3 behind
+            loop_time_3_behind = text_ls[elem + 30]
+            # !!!
+            self.data.iat[j, 28] = loop_time_3_behind
+
+            # loop time 3 rank
+            loop_time_3_rank = text_ls[elem + 31]
+            # !!!
+            self.data.iat[j, 29] = loop_time_3_rank
+
+            # loop time 4
+            loop_time_4 = text_ls[elem + 32]
+            # !!!
+            self.data.iat[j, 30] = loop_time_4
+
+            # loop time 4 behind
+            loop_time_4_behind = text_ls[elem + 33]
+            # !!!
+            self.data.iat[j, 31] = loop_time_4_behind
+
+            # loop time 4 rank
+            loop_time_4_rank = text_ls[elem + 34]
+            # !!!
+            self.data.iat[j, 32] = loop_time_4_rank
+
+            # loop time 5
+            loop_time_5 = text_ls[elem + 35]
+            # !!!
+            self.data.iat[j, 33] = loop_time_5
+
+            # loop time 5 behind
+            loop_time_5_behind = text_ls[elem + 36]
+            # !!!
+            self.data.iat[j, 34] = loop_time_5_behind
+
+            # loop time 5 rank
+            loop_time_5_rank = text_ls[elem + 37]
+            # !!!
+            self.data.iat[j, 35] = loop_time_5_rank
+
+            # shooting misses loop 1
+            shooting_misses_1 = text_ls[elem + 39]
+            self.data.iat[j, 36] = shooting_misses_1
+
+            # shooting time 1
+            shooting_time_1 = text_ls[elem + 40]
+            # !!!
+            self.data.iat[j, 37] = shooting_time_1
+
+            # shooting time loop 1 behind
+            shooting_time_loop_1_behind = text_ls[elem + 41]
+            # !!!
+            self.data.iat[j, 38] = shooting_time_loop_1_behind
+
+            # shooting time loop 1 rank
+            shooting_time_loop_1_rank = text_ls[elem + 42]
+            # !!!
+            self.data.iat[j, 39] = shooting_time_loop_1_rank
+
+            # shooting misses loop 2
+            shooting_misses_2 = text_ls[elem + 43]
+            self.data.iat[j, 40] = shooting_misses_2
+
+            # shooting loop time 2
+            shooting_loop_time_2 = text_ls[elem + 44]
+            # !!!
+            self.data.iat[j, 41] = shooting_loop_time_2
+
+            # shooting loop time 2 behind
+            shooting_loop_time_2_behind = text_ls[elem + 45]
+            # !!!
+            self.data.iat[j, 42] = shooting_loop_time_2_behind
+
+            # shooting loop time 2 rank
+            shooting_loop_time_2_rank = text_ls[elem + 46]
+            # !!!
+            self.data.iat[j, 43] = shooting_loop_time_2_rank
+
+            # shooting misses loop 3
+            shooting_misses_3 = text_ls[elem + 47]
+            self.data.iat[j, 44] = shooting_misses_3
+
+            # shooting loop time 3
+            shooting_loop_time_3 = text_ls[elem + 48]
+            # !!!
+            self.data.iat[j, 45] = shooting_loop_time_3
+
+            # shooting loop time 3 behind
+            shooting_loop_time_3_behind = text_ls[elem + 49]
+            # !!!
+            self.data.iat[j, 46] = shooting_loop_time_3_behind
+
+            # shooting loop time 3 rank
+            shooting_loop_time_3_rank = text_ls[elem + 50]
+            # !!!
+            self.data.iat[j, 47] = shooting_loop_time_3_rank
+
+            # shooting misses loop 4
+            shooting_misses_4 = text_ls[elem + 51]
+            self.data.iat[j, 48] = shooting_misses_4
+
+            # shooting loop time 4
+            shooting_loop_time_4 = text_ls[elem + 52]
+            # !!!
+            self.data.iat[j, 49] = shooting_loop_time_4
+
+            # shooting loop time 4 behind
+            shooting_loop_time_4_behind = text_ls[elem + 53]
+            # !!!
+            self.data.iat[j, 50] = shooting_loop_time_4_behind
+
+            # shooting loop time 4 rank
+            shooting_loop_time_4_rank = text_ls[elem + 54]
+            # !!!
+            self.data.iat[j, 51] = shooting_loop_time_4_rank
+
+            # shooting misses overall
+            shooting_misses_overall = text_ls[elem + 55]
+            self.data.iat[j, 52] = shooting_misses_overall
+
+            # shooting time overall
+            shooting_time_overall = text_ls[elem + 56]
+            # !!!
+            self.data.iat[j, 53] = shooting_time_overall
+
+            # shooting time overall behind
+            shooting_time_overall_behind = text_ls[elem + 57]
+            # !!!
+            self.data.iat[j, 54] = shooting_time_overall_behind
+
+            # shooting time overall rank
+            shooting_time_overall_rank = text_ls[elem + 58]
+            # !!!
+            self.data.iat[j, 55] = shooting_time_overall_rank
+
+            # range time loop 1
+            range_time_loop_1 = text_ls[elem + 60]
+            # !!!
+            self.data.iat[j, 56] = range_time_loop_1
+
+            # range time loop 1 behind
+            range_time_loop_1_behind = text_ls[elem + 61]
+            # !!!
+            self.data.iat[j, 57] = range_time_loop_1_behind
+
+            # range time loop 1 rank
+            range_time_loop_1_rank = text_ls[elem + 62]
+            # !!!
+            self.data.iat[j, 58] = range_time_loop_1_rank
+
+            # range time loop 2
+            range_time_loop_2 = text_ls[elem + 63]
+            # !!!
+            self.data.iat[j, 59] = range_time_loop_2
+
+            # range time loop 2 behind
+            range_time_loop_2_behind = text_ls[elem + 64]
+            # !!!
+            self.data.iat[j, 60] = range_time_loop_2_behind
+
+            # range time loop 2 rank
+            range_time_loop_2_rank = text_ls[elem + 65]
+            # !!!
+            self.data.iat[j, 61] = range_time_loop_2_rank
+
+            # range time loop 3
+            range_time_loop_3 = text_ls[elem + 66]
+            # !!!
+            self.data.iat[j, 62] = range_time_loop_3
+
+            # range time loop 3 behind
+            range_time_loop_3_behind = text_ls[elem + 67]
+            # !!!
+            self.data.iat[j, 63] = range_time_loop_3_behind
+
+            # range time loop 3 rank
+            range_time_loop_3_rank = text_ls[elem + 68]
+            # !!!
+            self.data.iat[j, 64] = range_time_loop_3_rank
+
+            # range time loop 4
+            range_time_loop_4 = text_ls[elem + 69]
+            # !!!
+            self.data.iat[j, 65] = range_time_loop_4
+
+            # range time loop 4 behind
+            range_time_loop_4_behind = text_ls[elem + 70]
+            # !!!
+            self.data.iat[j, 66] = range_time_loop_4_behind
+
+            # range time loop 4 rank
+            range_time_loop_4_rank = text_ls[elem + 71]
+            # !!!
+            self.data.iat[j, 67] = range_time_loop_4_rank
+
+            # range time overall
+            range_time_overall = text_ls[elem + 72]
+            # !!!
+            self.data.iat[j, 68] = range_time_overall
+
+            # range time overall behind
+            range_time_overall_behind = text_ls[elem + 73]
+            # !!!
+            self.data.iat[j, 69] = range_time_overall_behind
+
+            # range time overall rank
+            range_time_overall_rank = text_ls[elem + 74]
+            # !!!
+            self.data.iat[j, 70] = range_time_overall_rank
+
+            # course time loop 1
+            course_time_loop_1 = text_ls[elem + 76]
+            # !!!
+            self.data.iat[j, 71] = course_time_loop_1
+
+            # course time loop 1 behind
+            course_time_loop_1_behind = text_ls[elem + 77]
+            # !!!
+            self.data.iat[j, 72] = course_time_loop_1_behind
+
+            # course time loop 1 rank
+            course_time_loop_1_rank = text_ls[elem + 78]
+            # !!!
+            self.data.iat[j, 73] = course_time_loop_1_rank
+
+            # course time loop 2
+            course_time_loop_2 = text_ls[elem + 79]
+            # !!!
+            self.data.iat[j, 74] = course_time_loop_2
+
+            # course time loop 2 behind
+            course_time_loop_2_behind = text_ls[elem + 80]
+            # !!!
+            self.data.iat[j, 75] = course_time_loop_2_behind
+
+            # course time loop 2 rank
+            course_time_loop_2_rank = text_ls[elem + 81]
+            # !!!
+            self.data.iat[j, 76] = course_time_loop_2_rank
+
+            # course time loop 3
+            course_time_loop_3 = text_ls[elem + 82]
+            # !!!
+            self.data.iat[j, 77] = course_time_loop_3
+
+            # course time loop 3 behind
+            course_time_loop_3_behind = text_ls[elem + 83]
+            # !!!
+            self.data.iat[j, 78] = course_time_loop_3_behind
+
+            # course time loop 3 rank
+            course_time_loop_3_rank = text_ls[elem + 84]
+            # !!!
+            self.data.iat[j, 79] = course_time_loop_3_rank
+
+            # course time loop 4
+            course_time_loop_4 = text_ls[elem + 85]
+            # !!!
+            self.data.iat[j, 80] = course_time_loop_4
+
+            # course time loop 4 behind
+            course_time_loop_4_behind = text_ls[elem + 86]
+            # !!!
+            self.data.iat[j, 81] = course_time_loop_4_behind
+
+            # course time loop 4 rank
+            course_time_loop_4_rank = text_ls[elem + 87]
+            # !!!
+            self.data.iat[j, 82] = course_time_loop_4_rank
+
+            # course time loop 5
+            course_time_loop_5 = text_ls[elem + 88]
+            # !!!
+            self.data.iat[j, 83] = course_time_loop_5
+
+            # course time loop 5 behind
+            course_time_loop_5_behind = text_ls[elem + 89]
+            # !!!
+            self.data.iat[j, 84] = course_time_loop_5_behind
+
+            # course time loop 5 rank
+            course_time_loop_5_rank = text_ls[elem + 90]
+            # !!!
+            self.data.iat[j, 85] = course_time_loop_5_rank
+
+            # course time overall
+            course_time_overall = text_ls[elem + 91]
+            # !!!
+            self.data.iat[j, 86] = course_time_overall
+
+            # course time overall behind
+            course_time_overall_behind = text_ls[elem + 92]
+            # !!!
+            self.data.iat[j, 87] = course_time_overall_behind
+
+            # course time overall rank
+            course_time_overall_rank = text_ls[elem + 93]
+            # !!!
+            self.data.iat[j, 88] = course_time_overall_rank
+            # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
+            # GESAMT PENALTY TIME = EINFACH ADDDIEREN
+            # penalty_loop_1
+            # penalty_loop_1 = text_ls[i + 94]
+            # !!!
+            # self.data.iat[j, 89] = penalty_loop_1
+
+            # penalty_loop_2
+            # penalty_loop_2 = text_ls[i + 95]
+            # !!!
+            # self.data.iat[j, 90] = penalty_loop_2
+
+            # penalty_loop_3
+            # penalty_loop_3 = text_ls[i + 96]
+            # !!!
+            # self.data.iat[j, 91] = penalty_loop_3
+
+            # penalty_loop_4
+            # penalty_loop_4 = text_ls[i + 97]
+            # !!!
+            # self.data.iat[j, 92] = penalty_loop_4
+
+            # penalty_overall
+            # penalty_loop_overall = text_ls[i + 98]
+            # !!!
+            # self.data.iat[j, 93] = penalty_loop_overall
+            j += 1
+
     def get_data(self):
         """This method extracts specific race data from every biathlete (e.g. interim times, loop times)"""
         pages = cv.divide_into_pages(self.pdf_doc)
@@ -525,9 +1295,28 @@ class BiathlonData:
         for i in pages:
             text = text + i.getText('text')
         text_ls = text.split("\n")  # array of the lines of the string
-
+        print(text_ls)
         # update the athlete table in the database
         index_list = ba.update_athlete_db(text_ls)
+
+        # get the minimum limit, on which we try to stop reading data for the dataframe
+        # if we would try to read after one of these words occur in the list we would get in danger to
+        # provoke an IndexError because e.g. disqualified athletes might not have done a second lap
+        # Therefore there is a whitespace in the pdf and no readable element in text_ls
+        did_not_start_pos = did_not_finish_pos = lapped_pos = jury_dec_pos = disqualified_pos = len(text_ls)
+        if 'Did not start' in text_ls:
+            did_not_start_pos = text_ls.index('Did not start')
+        if 'Did not finish' in text_ls:
+            did_not_start_pos = text_ls.index('Did not finish')
+        if 'Lapped' in text_ls:
+            did_not_start_pos = text_ls.index('Lapped')
+        if 'Jury Decisions' in text_ls:
+            jury_dec_pos = text_ls.index('Jury Decisions')
+        if 'Did not start' in text_ls:
+            did_not_start_pos = text_ls.index('Did not start')
+        if 'Disqualified' in text_ls:
+            disqualified_pos = text_ls.index('Disqualified')
+        minimum_limit = min([did_not_finish_pos, did_not_start_pos, lapped_pos, jury_dec_pos, disqualified_pos])
 
         number_of_biathletes = 200
         if self.metadata['number_of_entries'] is not None:
@@ -566,8 +1355,45 @@ class BiathlonData:
                         'Course_Time_Overall_Rank', 'Penalty_Time_Loop1', 'Penalty_Time_Loop2',
                         'Penalty_Time_Loop3', 'Penalty_Time_Loop4', 'Penalty_Time_Overall']
 
-        self.data = pd.DataFrame(np.nan, index=list(range(number_of_biathletes)), columns=columns_list)
-        print(self.data.head())
+        self.data = pd.DataFrame(np.nan, index=list(range(number_of_biathletes)),
+                                 columns=columns_list, dtype=object)
+
+        # print(self.data.index)
+        # print(self.data.loc[0, ['Name']])  # selecting by label
+        # print(self.data.iloc[3])    # selecting by position
+        # print(self.data.iloc[3:5, 0:2])  # slicing
+        # print(self.data.iloc[[1, 2, 4], [0, 2]])  # specific positions
+        # print(self.data.iloc[1, 1])  # getting a value explicitly
+        # print(self.data[self.data['Name'] > 0])  # boolean indexing
+        # print(self.data[self.data > 0])
+        # print(self.data[self.data['Name'].isin(['two', 'NaN'])])
+        # print(self.data[self.data['Name'].isna()])
+
+        if self.metadata['description'] == 'COMPETITION ANALYSIS':
+            # if no race_type could be extracted stop this method get_data()
+            if self.metadata['race_type'] is None:
+                return
+            # ['SPRINT', 'PURSUIT', 'RELAY', 'INDIVIDUAL', 'MASS START', 'MIXED']
+            elif self.metadata['race_type'] == 'SPRINT':
+                self.sprint_data(text_ls, index_list, minimum_limit)
+            elif self.metadata['race_type'] == 'PURSUIT': # massenstart sollte gleich sein
+                self.pursuit_data(text_ls, index_list, minimum_limit)
+            elif self.metadata['race_type'] == 'RELAY':
+                pass
+            elif self.metadata['race_type'] == 'INDIVIDUAL':
+                pass
+            elif self.metadata['race_type'] == 'MASS START':
+                pass
+            elif self.metadata['race_type'] == 'MIXED':
+                pass
+
+
+
+
+            # for h, column in enumerate(columns_list):
+            #   self.data[column] = self.data[column].astype(types[h])
+            print(self.data.to_string())
+            print(self.data.head())
         types = [str, str, int, int, pd.Timestamp, pd.Timestamp, int, pd.Timestamp, pd.Timestamp,
                  int, pd.Timestamp, pd.Timestamp, int, pd.Timestamp, pd.Timestamp, int,
                  pd.Timestamp, pd.Timestamp, int, pd.Timestamp, pd.Timestamp, int, pd.Timestamp,
@@ -582,496 +1408,10 @@ class BiathlonData:
                  pd.Timestamp, int, pd.Timestamp, pd.Timestamp, int, pd.Timestamp, pd.Timestamp,
                  int, pd.Timestamp, pd.Timestamp, pd.Timestamp, pd.Timestamp, pd.Timestamp]
 
-        if self.metadata['description'] == 'COMPETITION ANALYSIS':
-            # print(self.data.index)
-            # print(self.data.loc[0, ['Name']])  # selecting by label
-            # print(self.data.iloc[3])    # selecting by position
-            # print(self.data.iloc[3:5, 0:2])  # slicing
-            # print(self.data.iloc[[1, 2, 4], [0, 2]])  # specific positions
-            # print(self.data.iloc[1, 1])  # getting a value explicitly
-            # print(self.data[self.data['Name'] > 0])  # boolean indexing
-            # print(self.data[self.data > 0])
-            # print(self.data[self.data['Name'].isin(['two', 'NaN'])])
-            # print(self.data[self.data['Name'].isna()])
-
-            self.data["Name"] = self.data["Name"].astype(str)
-            print(text_ls)
-            # name
-            j = 0
-            for i in index_list:
-                # name
-                name = text_ls[i]
-                self.data.iat[j, 0] = name
-
-                # country
-                country = text_ls[i + 1]
-                self.data.iat[j, 1] = country
-
-                # total misses
-                total_misses = text_ls[i + 2]
-                self.data.iat[j, 2] = total_misses
-
-                # overall time
-                overall_time = text_ls[i + 3]
-                # !!!
-                self.data.iat[j, 3] = overall_time
-
-                # overall time behind
-                overall_time_behind = text_ls[i + 4]
-                # !!!
-                self.data.iat[j, 4] = overall_time_behind
-
-                # overall rank
-                overall_rank = text_ls[i + 5]
-                # !!!
-                self.data.iat[j, 5] = overall_rank
-
-                # cumulative time loop 1
-                cumulative_time_loop_1 = text_ls[i + 7]
-                # !!!
-                self.data.iat[j, 6] = cumulative_time_loop_1
-
-                # cumulative time loop 1 behind
-                cumulative_time_loop_1_behind = text_ls[i + 8]
-                # !!!
-                self.data.iat[j, 7] = cumulative_time_loop_1_behind
-
-                # cumulative time loop 1 rank
-                cumulative_time_loop_1_rank = text_ls[i + 9]
-                # !!!
-                self.data.iat[j, 8] = cumulative_time_loop_1_rank
-
-                # cumulative time loop 2
-                cumulative_time_loop_2 = text_ls[i + 10]
-                # !!!
-                self.data.iat[j, 9] = cumulative_time_loop_2
-
-                # cumulative time loop 2 behind
-                cumulative_time_loop_2_behind = text_ls[i + 11]
-                # !!!
-                self.data.iat[j, 10] = cumulative_time_loop_2_behind
-
-                # cumulative time loop 2 rank
-                cumulative_time_loop_2_rank = text_ls[i + 12]
-                # !!!
-                self.data.iat[j, 11] = cumulative_time_loop_2_rank
-
-                # cumulative time loop 3
-                cumulative_time_loop_3 = text_ls[i + 13]
-                # !!!
-                self.data.iat[j, 12] = cumulative_time_loop_3
-
-                # cumulative time loop 3 behind
-                cumulative_time_loop_3_behind = text_ls[i + 14]
-                # !!!
-                self.data.iat[j, 13] = cumulative_time_loop_3_behind
-
-                # cumulative time loop 3 rank
-                cumulative_time_loop_3_rank = text_ls[i + 15]
-                # !!!
-                self.data.iat[j, 14] = cumulative_time_loop_3_rank
-
-                # cumulative time loop 4
-                cumulative_time_loop_4 = text_ls[i + 16]
-                # !!!
-                self.data.iat[j, 15] = cumulative_time_loop_4
-
-                # cumulative time loop 4 behind
-                cumulative_time_loop_4_behind = text_ls[i + 17]
-                # !!!
-                self.data.iat[j, 16] = cumulative_time_loop_4_behind
-
-                # cumulative time loop 4 rank
-                cumulative_time_loop_4_rank = text_ls[i + 18]
-                # !!!
-                self.data.iat[j, 17] = cumulative_time_loop_4_rank
-
-                # cumulative time overall
-                cumulative_time_overall = text_ls[i + 19]
-                # !!!
-                self.data.iat[j, 18] = cumulative_time_overall
-
-                # cumulative time overall behind
-                cumulative_time_overall_behind = text_ls[i + 20]
-                # !!!
-                self.data.iat[j, 19] = cumulative_time_overall_behind
-
-                # cumulative time overall rank
-                cumulative_time_overall_rank = text_ls[i + 21]
-                # !!!
-                self.data.iat[j, 20] = cumulative_time_overall_rank
-
-                # loop time 1
-                loop_time_1 = text_ls[i + 23]
-                # !!!
-                self.data.iat[j, 21] = loop_time_1
-
-                # loop time 1 behind
-                loop_time_1_behind = text_ls[i + 24]
-                # !!!
-                self.data.iat[j, 22] = loop_time_1_behind
-
-                # loop time 1 rank
-                loop_time_1_rank = text_ls[i + 25]
-                # !!!
-                self.data.iat[j, 23] = loop_time_1_rank
-
-                # loop time 2
-                loop_time_2 = text_ls[i + 26]
-                # !!!
-                self.data.iat[j, 24] = loop_time_2
-
-                # loop time 2 behind
-                loop_time_2_behind = text_ls[i + 27]
-                # !!!
-                self.data.iat[j, 25] = loop_time_2_behind
-
-                # loop time 2 rank
-                loop_time_2_rank = text_ls[i + 28]
-                # !!!
-                self.data.iat[j, 26] = loop_time_2_rank
-
-                # loop time 3
-                loop_time_3 = text_ls[i + 29]
-                # !!!
-                self.data.iat[j, 27] = loop_time_3
-
-                # loop time 3 behind
-                loop_time_3_behind = text_ls[i + 30]
-                # !!!
-                self.data.iat[j, 28] = loop_time_3_behind
-
-                # loop time 3 rank
-                loop_time_3_rank = text_ls[i + 31]
-                # !!!
-                self.data.iat[j, 29] = loop_time_3_rank
-
-                # loop time 4
-                loop_time_4 = text_ls[i + 32]
-                # !!!
-                self.data.iat[j, 30] = loop_time_4
-
-                # loop time 4 behind
-                loop_time_4_behind = text_ls[i + 33]
-                # !!!
-                self.data.iat[j, 31] = loop_time_4_behind
-
-                # loop time 4 rank
-                loop_time_4_rank = text_ls[i + 34]
-                # !!!
-                self.data.iat[j, 32] = loop_time_4_rank
-
-                # loop time 5
-                loop_time_5 = text_ls[i + 35]
-                # !!!
-                self.data.iat[j, 33] = loop_time_5
-
-                # loop time 5 behind
-                loop_time_5_behind = text_ls[i + 36]
-                # !!!
-                self.data.iat[j, 34] = loop_time_5_behind
-
-                # loop time 5 rank
-                loop_time_5_rank = text_ls[i + 37]
-                # !!!
-                self.data.iat[j, 35] = loop_time_5_rank
-
-                # shooting misses loop 1
-                shooting_misses_1 = text_ls[i + 39]
-                self.data.iat[j, 36] = shooting_misses_1
-
-                # shooting time 1
-                shooting_time_1 = text_ls[i + 40]
-                # !!!
-                self.data.iat[j, 37] = shooting_time_1
-
-                # shooting time loop 1 behind
-                shooting_time_loop_1_behind = text_ls[i + 41]
-                # !!!
-                self.data.iat[j, 38] = shooting_time_loop_1_behind
-
-                # shooting time loop 1 rank
-                shooting_time_loop_1_rank = text_ls[i + 42]
-                # !!!
-                self.data.iat[j, 39] = shooting_time_loop_1_rank
-
-                # shooting misses loop 2
-                shooting_misses_2 = text_ls[i + 43]
-                self.data.iat[j, 40] = shooting_misses_2
-
-                # shooting loop time 2
-                shooting_loop_time_2 = text_ls[i + 44]
-                # !!!
-                self.data.iat[j, 41] = shooting_loop_time_2
-
-                # shooting loop time 2 behind
-                shooting_loop_time_2_behind = text_ls[i + 45]
-                # !!!
-                self.data.iat[j, 42] = shooting_loop_time_2_behind
-
-                # shooting loop time 2 rank
-                shooting_loop_time_2_rank = text_ls[i + 46]
-                # !!!
-                self.data.iat[j, 43] = shooting_loop_time_2_rank
-
-                # shooting misses loop 3
-                shooting_misses_3 = text_ls[i + 47]
-                self.data.iat[j, 44] = shooting_misses_3
-
-                # shooting loop time 3
-                shooting_loop_time_3 = text_ls[i + 48]
-                # !!!
-                self.data.iat[j, 45] = shooting_loop_time_3
-
-                # shooting loop time 3 behind
-                shooting_loop_time_3_behind = text_ls[i + 49]
-                # !!!
-                self.data.iat[j, 46] = shooting_loop_time_3_behind
-
-                # shooting loop time 3 rank
-                shooting_loop_time_3_rank = text_ls[i + 50]
-                # !!!
-                self.data.iat[j, 47] = shooting_loop_time_3_rank
-
-                # shooting misses loop 4
-                shooting_misses_4 = text_ls[i + 51]
-                self.data.iat[j, 48] = shooting_misses_4
-
-                # shooting loop time 4
-                shooting_loop_time_4 = text_ls[i + 52]
-                # !!!
-                self.data.iat[j, 49] = shooting_loop_time_4
-
-                # shooting loop time 4 behind
-                shooting_loop_time_4_behind = text_ls[i + 53]
-                # !!!
-                self.data.iat[j, 50] = shooting_loop_time_4_behind
-
-                # shooting loop time 4 rank
-                shooting_loop_time_4_rank = text_ls[i + 54]
-                # !!!
-                self.data.iat[j, 51] = shooting_loop_time_4_rank
-
-                # shooting misses overall
-                shooting_misses_overall = text_ls[i + 55]
-                self.data.iat[j, 52] = shooting_misses_overall
-
-                # shooting time overall
-                shooting_time_overall = text_ls[i + 56]
-                # !!!
-                self.data.iat[j, 53] = shooting_time_overall
-
-                # shooting time overall behind
-                shooting_time_overall_behind = text_ls[i + 57]
-                # !!!
-                self.data.iat[j, 54] = shooting_time_overall_behind
-
-                # shooting time overall rank
-                shooting_time_overall_rank = text_ls[i + 58]
-                # !!!
-                self.data.iat[j, 55] = shooting_time_overall_rank
-
-                # range time loop 1
-                range_time_loop_1 = text_ls[i + 60]
-                # !!!
-                self.data.iat[j, 56] = range_time_loop_1
-
-                # range time loop 1 behind
-                range_time_loop_1_behind = text_ls[i + 61]
-                # !!!
-                self.data.iat[j, 57] = range_time_loop_1_behind
-
-                # range time loop 1 rank
-                range_time_loop_1_rank = text_ls[i + 62]
-                # !!!
-                self.data.iat[j, 58] = range_time_loop_1_rank
-
-                # range time loop 2
-                range_time_loop_2 = text_ls[i + 63]
-                # !!!
-                self.data.iat[j, 59] = range_time_loop_2
-
-                # range time loop 2 behind
-                range_time_loop_2_behind = text_ls[i + 64]
-                # !!!
-                self.data.iat[j, 60] = range_time_loop_2_behind
-
-                # range time loop 2 rank
-                range_time_loop_2_rank = text_ls[i + 65]
-                # !!!
-                self.data.iat[j, 61] = range_time_loop_2_rank
-
-                # range time loop 3
-                range_time_loop_3 = text_ls[i + 66]
-                # !!!
-                self.data.iat[j, 62] = range_time_loop_3
-
-                # range time loop 3 behind
-                range_time_loop_3_behind = text_ls[i + 67]
-                # !!!
-                self.data.iat[j, 63] = range_time_loop_3_behind
-
-                # range time loop 3 rank
-                range_time_loop_3_rank = text_ls[i + 68]
-                # !!!
-                self.data.iat[j, 64] = range_time_loop_3_rank
-
-                # range time loop 4
-                range_time_loop_4 = text_ls[i + 69]
-                # !!!
-                self.data.iat[j, 65] = range_time_loop_4
-
-                # range time loop 4 behind
-                range_time_loop_4_behind = text_ls[i + 70]
-                # !!!
-                self.data.iat[j, 66] = range_time_loop_4_behind
-
-                # range time loop 4 rank
-                range_time_loop_4_rank = text_ls[i + 71]
-                # !!!
-                self.data.iat[j, 67] = range_time_loop_4_rank
-
-                # range time overall
-                range_time_overall = text_ls[i + 72]
-                # !!!
-                self.data.iat[j, 68] = range_time_overall
-
-                # range time overall behind
-                range_time_overall_behind = text_ls[i + 73]
-                # !!!
-                self.data.iat[j, 69] = range_time_overall_behind
-
-                # range time overall rank
-                range_time_overall_rank = text_ls[i + 74]
-                # !!!
-                self.data.iat[j, 70] = range_time_overall_rank
-
-                # course time loop 1
-                course_time_loop_1 = text_ls[i + 76]
-                # !!!
-                self.data.iat[j, 71] = course_time_loop_1
-
-                # course time loop 1 behind
-                course_time_loop_1_behind = text_ls[i + 77]
-                # !!!
-                self.data.iat[j, 72] = course_time_loop_1_behind
-
-                # course time loop 1 rank
-                course_time_loop_1_rank = text_ls[i + 78]
-                # !!!
-                self.data.iat[j, 73] = course_time_loop_1_rank
-
-                # course time loop 2
-                course_time_loop_2 = text_ls[i + 79]
-                # !!!
-                self.data.iat[j, 74] = course_time_loop_2
-
-                # course time loop 2 behind
-                course_time_loop_2_behind = text_ls[i + 80]
-                # !!!
-                self.data.iat[j, 75] = course_time_loop_2_behind
-
-                # course time loop 2 rank
-                course_time_loop_2_rank = text_ls[i + 81]
-                # !!!
-                self.data.iat[j, 76] = course_time_loop_2_rank
-
-                # course time loop 3
-                course_time_loop_3 = text_ls[i + 82]
-                # !!!
-                self.data.iat[j, 77] = course_time_loop_3
-
-                # course time loop 3 behind
-                course_time_loop_3_behind = text_ls[i + 83]
-                # !!!
-                self.data.iat[j, 78] = course_time_loop_3_behind
-
-                # course time loop 3 rank
-                course_time_loop_3_rank = text_ls[i + 84]
-                # !!!
-                self.data.iat[j, 79] = course_time_loop_3_rank
-
-                # course time loop 4
-                course_time_loop_4 = text_ls[i + 85]
-                # !!!
-                self.data.iat[j, 80] = course_time_loop_4
-
-                # course time loop 4 behind
-                course_time_loop_4_behind = text_ls[i + 86]
-                # !!!
-                self.data.iat[j, 81] = course_time_loop_4_behind
-
-                # course time loop 4 rank
-                course_time_loop_4_rank = text_ls[i + 87]
-                # !!!
-                self.data.iat[j, 82] = course_time_loop_4_rank
-
-                # course time loop 5
-                course_time_loop_5 = text_ls[i + 88]
-                # !!!
-                self.data.iat[j, 83] = course_time_loop_5
-
-                # course time loop 5 behind
-                course_time_loop_5_behind = text_ls[i + 89]
-                # !!!
-                self.data.iat[j, 84] = course_time_loop_5_behind
-
-                # course time loop 5 rank
-                course_time_loop_5_rank = text_ls[i + 90]
-                # !!!
-                self.data.iat[j, 85] = course_time_loop_5_rank
-
-                # course time overall
-                course_time_overall = text_ls[i + 91]
-                # !!!
-                self.data.iat[j, 86] = course_time_overall
-
-                # course time overall behind
-                course_time_overall_behind = text_ls[i + 92]
-                # !!!
-                self.data.iat[j, 87] = course_time_overall_behind
-
-                # course time overall rank
-                course_time_overall_rank = text_ls[i + 93]
-                # !!!
-                self.data.iat[j, 88] = course_time_overall_rank
-
-                # penalty_loop_1
-                penalty_loop_1 = text_ls[i + 94]
-                # !!!
-                self.data.iat[j, 89] = penalty_loop_1
-
-                # penalty_loop_2
-                penalty_loop_2 = text_ls[i + 95]
-                # !!!
-                self.data.iat[j, 90] = penalty_loop_2
-
-                # penalty_loop_3
-                penalty_loop_3 = text_ls[i + 96]
-                # !!!
-                self.data.iat[j, 91] = penalty_loop_3
-
-                # penalty_loop_4
-                penalty_loop_4 = text_ls[i + 97]
-                # !!!
-                self.data.iat[j, 92] = penalty_loop_4
-
-                # penalty_overall
-                penalty_loop_overall = text_ls[i + 98]
-                # !!!
-                self.data.iat[j, 93] = penalty_loop_overall
-                j += 1
-            # for h, column in enumerate(columns_list):
-            #   self.data[column] = self.data[column].astype(types[h])
-            print(self.data.head())
-
-    #  except IndexError:
-    #     print('this should not happen; Please look into get_data()')
-    # print(self.data)
-
     def get_start_list(self):
         self.start_list = 0
         pass  # update self.start_list
+
 
 
 if __name__ == "__main__":
@@ -1079,6 +1419,15 @@ if __name__ == "__main__":
     pdf_doc_1 = fitz.Document("../Tests/BT_C51A_1.0(1).pdf")
     pdf_doc_2 = fitz.Document("../Tests/BT_C77D_1.0(5).pdf")
     pdf_doc_3 = fitz.Document("../Tests/BT_C82_1.0(1).pdf")
+    pdf_doc_4 = fitz.Document("../Tests/BT_O77B_1.0.pdf")
+    pdf_doc_5 = fitz.Document("../Tests/BT_O77B_1.0(1).pdf")
+
+    pages = cv.divide_into_pages(pdf_doc_4)
+    text = ""
+    for i in pages:
+        text = text + i.getText('text')
+    text_ls = text.split("\n")  # array of the lines of the string
+    print(text_ls)
 
     # first = BiathlonData(pdf_doc_1, organisation)
     second = BiathlonData(pdf_doc_2, organisation)

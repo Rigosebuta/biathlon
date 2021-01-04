@@ -246,8 +246,8 @@ def create_athlete(athlete_name):
     goggles_inp = input('Please enter the company which provides goggles for the athlete: ')
 
     while True:
-        size_inp = input('Please enter the size of the athlete: ')
-        weight_inp = input('Please enter the weight of the athlete: ')
+        size_inp = input('Please enter the size of the athlete. If not available insert -1: ')
+        weight_inp = input('Please enter the weight of the athlete. If not available insert -1: ')
         try:
             size_inp = int(size_inp)
             weight_inp = int(weight_inp)

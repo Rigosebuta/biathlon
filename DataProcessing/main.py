@@ -1,7 +1,8 @@
 """This module invokes the other modules to transform all the data"""
 import os
+from DataProcessing import converting_data as cd, extracting_data as ed, database_connection as dc
+import pandas as pd
 
-from DataProcessing import converting_data as cd, extracting_data as ed, biathlete as ba
 
 def transform_data(path, organisation):
     """This method transform data from pdf to BiathlonData object
@@ -43,12 +44,40 @@ def transform_data(path, organisation):
 
     biathlon_data_ls = []
     for i in doc_ls:
+        print(i)
         biathlon_data_ls.append(ed.BiathlonData(i, organisation))
     for doc in doc_ls:
         doc.close()
     return biathlon_data_ls
 
 
+def data_to_database(biathlon_obj):
+
+    not_none_list = [biathlon_obj.metadata['place'], biathlon_obj.metadata['date'],
+                     biathlon_obj.metadata['race_type'], biathlon_obj.metadata['age_group'],
+                     biathlon_obj.metadata['gender']]
+    if None in not_none_list:
+        print('This should not happen. Please look into extractinng_data -> get_metadata()')
+        raise Exception
+
+    conn = dc.get_connection()
+    athlete_table = pd.read_sql_query(
+        '''SELECT *
+        FROM Race
+        WHERE place = biathlon_obj.metadata AND date = biathlon_obj.metadata''', conn)
+
+    df = pd.DataFrame(athlete_table, columns=['place', 'date', 'type', 'age', 'gender'])
+    if empty dann ein neues kreiren
+        ansonsten row_id zurückgeben
+    print(df.to_string())
+
+    sql_statement = """
+                SELECT *
+                FROM Race
+                WHERE """
+    for index, row in df.iterrows():
+        print(index, row['place'], row['age'])
+        if
 def join_same_races(biathlon_data_ls):  # works only if everything else in extracting_data works
     """This method joins two BiathlonData objects"""
     ls = []
@@ -86,16 +115,23 @@ def main():
     """Data is accessible through https://biathlonresults.com. For getting usable data only use
     Start List, Competition Analysis and Competition Data Summary and only if they all exist"""
 
-    ba.create_json_and_db()
+    dc.create_json_and_db()
 
-    biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\TestData', "WORLD CUP")
-    print(biathlon_data)
-    joined_biathlon = join_same_races(biathlon_data)
-    print(joined_biathlon)
-    print((len(biathlon_data)))
-    print(len(joined_biathlon))
-    print(len(biathlon_data) - len(joined_biathlon))
-    print()
+    #biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', "WORLD CUP")
+    doc_ls = cd.convert_pdf_to_document([r'C:\Users\Michael\Documents\python_projects\biathlon\Tests\BT_C77D_1.0(5).pdf'])
+    a = ed.BiathlonData(doc_ls[0], 'WORLD CUP')
+    data_to_database(a)
+    #print(a.data)
+    #print(a.start_list)
+    #print(doc_ls)
+
+
+    #joined_biathlon = join_same_races(biathlon_data)
+    #print(joined_biathlon)
+    #print((len(biathlon_data)))
+    #print(len(joined_biathlon))
+    #print(len(biathlon_data) - len(joined_biathlon))
+    #print()
     #world_cup_2006_2007 = transform_data(r"C:\Users\Michael\Downloads")
     # transform_data(r"E:\Biathlon 010203")
 

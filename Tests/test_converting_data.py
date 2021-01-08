@@ -104,11 +104,11 @@ def test_from_one_unity_to_float_2():
     ["32.2", "32.2", "2.3", "32.223"], ["32.2 m/s", "32.2 m/s", "2.3 m/s", "32. 22 m/s"],
     ["S 32.2 m/s", "SW32.2 m/s", "N2.3 m/s", "W32. 22 m/s"]
 ])
-
 def test_from_one_unity_to_float_3(type_error_from_meter_per_s_to_float):
     """This method tests the method from_celsius_to_float() with cases which invoke a TypeError"""
     with pytest.raises(TypeError):
         cv.from_one_unity_to_float(type_error_from_meter_per_s_to_float, " ")
+
 
 def test_from_one_unity_to_float_4():
     """This method tests the method from_one_unity_to_float() with a true case"""
@@ -128,8 +128,3 @@ def test_eliminating_leading_zero_2():
     """This method tests the method eliminating_leading_zero() with a true case"""
     assert cv.eliminating_leading_zero("bye") == "bye"
     assert cv.eliminating_leading_zero("0bye") == "0bye"[1:]
-
-
-
-#def test_get_time():
- #   assert False

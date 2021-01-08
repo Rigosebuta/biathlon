@@ -1,6 +1,7 @@
 """ This module extract data from the 'Document' objects"""
 
 import datetime
+import os
 import re
 import numpy as np
 import pandas as pd
@@ -207,7 +208,7 @@ class BiathlonData:
                 text_zero (str): first page of the document as a string
 
             - If a place matches the string, metadata['place'] will be updated
-            - If no place matches the string, it will be raised an exception
+            - If no place matches the string, it will asked for an input of the user
         """
 
         # all possible places in Biathlon
@@ -260,11 +261,13 @@ class BiathlonData:
                 self.metadata['place'] = pl
                 break
         else:  # gets only executed if no match is found
-            print('Please update the places or insert it manual', self.pdf_doc)
+            print('Please update the places or insert it manual (in uppercase)', self.pdf_doc)
             # print(text_zero)  # if looking in the text is necessary
-            # os.startfile(self.pdf_doc.name)
-            # inp = input("Please update/enter the place manual:")
-            # self.get_place(inp)
+            print(self.pdf_doc.name)
+            print(os.path.dirname(os.path.abspath(__file__)))
+            os.startfile(self.pdf_doc.name)
+            inp = input("Please update/enter the place manual:")
+            self.get_place(inp)
 
     def get_place_country(self, place):
         """This method assigns the country to the place
@@ -396,7 +399,7 @@ class BiathlonData:
     def get_date(self):
         """This method extracts the date of the race through the pdfs metadata"""
         data_pdf = self.pdf_doc.metadata
-        print(data_pdf)
+#        print(data_pdf)
         datum = data_pdf['creationDate']
         try:
             year = int(datum[2:6])
@@ -1169,7 +1172,7 @@ class BiathlonData:
         for i in pages:
             text = text + i.getText('text')
         text_ls = text.split("\n")  # array of the lines of the string
-        print(text_ls)
+        #print(text_ls)
         # update the athlete table in the database
         index_list = ba.update_athlete_db(text_ls)
 
@@ -1292,12 +1295,15 @@ if __name__ == "__main__":
 
     organisation = 'WORLD CUP'
     pdf_doc_1 = fitz.Document("../Tests/BT_C51A_1.0(1).pdf")
-    pdf_doc_2 = fitz.Document("../Tests/BT_C77D_1.0(5).pdf")
+    pdf_doc_2_1 = fitz.Document(r"C:\Users\Michael\Documents\python_projects\biathlon\Tests\BT_C77D_1.0(5).pdf")
     pdf_doc_3 = fitz.Document("../Tests/BT_C82_1.0(1).pdf")
     pdf_doc_4 = fitz.Document("../Tests/BT_O77B_1.0.pdf")
     pdf_doc_5 = fitz.Document("../Tests/BT_O77B_1.0(1).pdf")
 
-    pages = cv.divide_into_pages(pdf_doc_4)
+    pdf_doc_2_2 = fitz.Document("../Tests/BT_C82_1.0.pdf")
+    pdf_doc_2_3 = fitz.Document("../Tests/BT_C51C_1.0.pdf")
+
+    pages = cv.divide_into_pages(pdf_doc_2_1)
     text = ""
     for i in pages:
         text = text + i.getText('text')
@@ -1305,8 +1311,13 @@ if __name__ == "__main__":
     print(text_ls)
 
     # first = BiathlonData(pdf_doc_1, organisation)
-    second = BiathlonData(pdf_doc_2, organisation)
-    print(second.metadata['date'])
+    second_1 = BiathlonData(pdf_doc_2_1, organisation)
+    second_2 = BiathlonData(pdf_doc_2_2, organisation)
+    second_3 = BiathlonData(pdf_doc_2_3, organisation)
+    print(second_1.data.to_string())
+    print(second_1.metadata)
+    print(second_2.metadata)
+    print(second_3.metadata)
 
     # print(second.metadata)
     # print(second.data.head())

@@ -6,7 +6,6 @@
     from PyMuPDF: https://pymupdf.readthedocs.io/en/latest/document.html
 """
 
-
 import re
 import fitz
 
@@ -135,34 +134,6 @@ def eliminating_leading_zero(number_as_string):
         return number_as_string[1:]
     return number_as_string
 
-
-def get_time(str_time):
-    """This method converts a string appearing in the data into a "time" object"""
-
-    time_ls = str_time.split(":")
-    if len(time_ls) > 2:
-        try:
-            time_ls = [eliminating_leading_zero(time) for time in time_ls]
-            hours = int(time_ls[0])
-            minutes = int(time_ls[1])
-            seconds_ls = time_ls[2].split(".")
-            seconds_ls = [eliminating_leading_zero(sec) for sec in seconds_ls]
-            seconds = int(seconds_ls[0])
-            milliseconds = int(seconds_ls[1])
-        except ValueError:
-            print("This should not happen. Please look into get_time()")
-    else:
-        try:
-            hours = 0
-            time_ls = [eliminating_leading_zero(time) for time in time_ls]
-            minutes = int(time_ls[0])
-            seconds_ls = time_ls[1].split(".")
-            seconds_ls = [eliminating_leading_zero(sec) for sec in seconds_ls]
-            seconds = int(seconds_ls[0])
-            milliseconds = int(seconds_ls[1])
-
-        except ValueError:
-            print("This should not happen. Please look into get_time()")
 
 if __name__ == "__main__":
     pass

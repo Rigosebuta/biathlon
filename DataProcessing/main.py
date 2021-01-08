@@ -1,7 +1,6 @@
 """This module invokes the other modules to transform all the data"""
 import os
 from DataProcessing import converting_data as cd, extracting_data as ed, database_connection as dc
-import pandas as pd
 
 
 def transform_data(path, organisation):
@@ -53,63 +52,50 @@ def transform_data(path, organisation):
 
 def data_to_database(biathlon_obj):
 
-    not_none_list = [biathlon_obj.metadata['place'], biathlon_obj.metadata['date'],
-                     biathlon_obj.metadata['race_type'], biathlon_obj.metadata['age_group'],
-                     biathlon_obj.metadata['gender']]
-    if None in not_none_list:
-        print('This should not happen. Please look into extractinng_data -> get_metadata()')
+    place = biathlon_obj.metadata['place']
+    date = biathlon_obj.metadata['date']
+    race_type = biathlon_obj.metadata['race_type']
+    age_group = biathlon_obj.metadata['age_group']
+    gender = biathlon_obj.metadata['gender']
+    race_id = (place, date, race_type, age_group, gender)
+    if None in race_id:
+        print('This should not happen. Please look into extracting_data -> get_metadata()')
         raise Exception
 
     conn = dc.get_connection()
-    athlete_table = pd.read_sql_query(
-        '''SELECT *
-        FROM Race
-        WHERE place = biathlon_obj.metadata AND date = biathlon_obj.metadata''', conn)
+    cursor = conn.cursor()
+    get_rowid = "SELECT ROWID FROM Race WHERE place = ? AND date = ? AND type = ? AND age = ? AND gender = ? ;"
+    cursor.execute(get_rowid, race_id)
+    rows = cursor.fetchall()
+    if rows:
+        race_number = rows[0][0]
+    else:
+        key_row = "INSERT INTO Race (place, date, type, age, gender) " \
+                      "VALUES(?, ?, ?, ?, ?);"
+        cursor.execute(key_row, race_id)
+        conn.commit()
+        get_rowid = "SELECT ROWID FROM Race WHERE place = ? AND date = ? AND type = ? AND age = ? AND gender = ? ;"
+        cursor.execute(get_rowid, race_id)
+        rows = cursor.fetchall()
+        race_number = rows[0][0]
 
-    df = pd.DataFrame(athlete_table, columns=['place', 'date', 'type', 'age', 'gender'])
-    if empty dann ein neues kreiren
-        ansonsten row_id zurückgeben
-    print(df.to_string())
+    # insert additional data
+    add_info = ['race_len_km', 'number_of_entries', 'did_not_start', 'did_not_finish', 'lapped',
+                'disqualified', 'disqualified_for_unsportsmanlike_behaviour', 'ranked', 'weather',
+                'snow_condition', 'snow_temperature', 'air_temperature', 'humidity', 'wind_direction',
+                'wind_speed', 'total_course_length', 'height_difference', 'max_climb', 'total_climb',
+                'level_difficulty']
+    sql_none_values = []
+    for i in add_info:
+        if biathlon_obj.metadata[i] is None:
+            continue
+        sql_
+    wenn wert schon besetzt, dann überprüfen ob es passt
+    awenn nicht einfügen;)
 
-    sql_statement = """
-                SELECT *
-                FROM Race
-                WHERE """
-    for index, row in df.iterrows():
-        print(index, row['place'], row['age'])
-        if
-def join_same_races(biathlon_data_ls):  # works only if everything else in extracting_data works
-    """This method joins two BiathlonData objects"""
-    ls = []
-
-    for i, j in enumerate(biathlon_data_ls):
-        place = j.metadata['place']
-        date = j.metadata['date']
-        race_typ = j.metadata['race_type']
-        gender = j.metadata['gender']
-        if i + 1 < len(biathlon_data_ls):
-            for k in biathlon_data_ls[i + 1:]:
-                if place == k.metadata['place'] and \
-                        date == k.metadata['date'] and \
-                        race_typ == k.metadata['race_type'] and \
-                        gender == k.metadata['gender']:
-                    for key in j.metadata:
-                        if j.metadata[key] is None:
-                            j.metadata[key] = k.metadata[key]
-                        elif j.metadata[key] is not None and \
-                                j.metadata[key] is not None and \
-                                (not j.metadata[key] == j.metadata[key]):
-                            print("Please look into join_same_races()")
-                            raise Exception
-                    if j.data is None:
-                        j.data = k.data
-                    if j.start_list is None:
-                        j.start_list = k.start_list
-                    ls.append(j)
-    return [complete for complete in ls if complete.start_list
-            is not None and complete.data is not None and
-            complete.metadata['total_course_length'] is not None]
-
+        get_length = "SELECT length FROM RACE WHERE rowid = ?"
+        cursor.execute(get_length, (race_number,))
+        a = cursor.fetchall()
 
 def main():
     """Data is accessible through https://biathlonresults.com. For getting usable data only use
@@ -141,3 +127,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

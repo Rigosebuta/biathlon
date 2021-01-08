@@ -261,12 +261,12 @@ class BiathlonData:
                 self.metadata['place'] = pl
                 break
         else:  # gets only executed if no match is found
-            print('Please update the places or insert it manual (in uppercase)', self.pdf_doc)
+            #print('Please update the places or insert it manual (in uppercase)', self.pdf_doc)
             # print(text_zero)  # if looking in the text is necessary
-            print(self.pdf_doc.name)
-            print(os.path.dirname(os.path.abspath(__file__)))
+            #print(self.pdf_doc.name)
+            #print(os.path.dirname(os.path.abspath(__file__)))
             os.startfile(self.pdf_doc.name)
-            inp = input("Please update/enter the place manual:")
+            inp = input("Please update/enter the place manual (in uppercase):")
             self.get_place(inp)
 
     def get_place_country(self, place):

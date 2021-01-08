@@ -47,25 +47,34 @@ def create_json_and_db():
                     type VARCHAR(20) NOT NULL,
                     age VARCHAR(20) NOT NULL,
                     gender VARCHAR(20) NOT NULL,
+                    race_length_km VARCHAR(20),
+                    number_of_entries Integer,
+                    did_not_start Integer,
+                    did_not_finish Integer,
+                    lapped Integer,
+                    disqualified Integer,
+                    disqualified_for_unsportsmanlike_behaviour Integer,
+                    ranked Integer,
+                    weather VARCHAR(60),
+                    snow_condition VARCHAR(60),
+                    snow_temperature VARCHAR(60),
+                    air_temperature VARCHAR(60),
+                    humidity VARCHAR(60),
+                    wind_direction VARCHAR(60),
+                    wind_speed VARCHAR(60),
+                    total_course_length Integer,
+                    height_difference Integer,
+                    max_climb Integer,
+                    total_climb Integer,
+                    level_difficulty VARCHAR(20),
                     PRIMARY KEY(place, date, type, age, gender)
                     );"""
         cursor.execute(race_sql)
         connection.commit()
-        conditions_sql = """
-                        CREATE TABLE IF NOT EXISTS Conditions (
-                        place VARCHAR(20) NOT NULL,
-                        date VARCHAR(20) NOT NULL,
-                        type VARCHAR(20) NOT NULL,
-                        age VARCHAR(20) NOT NULL,
-                        gender VARCHAR(20) NOT NULL,
-                        PRIMARY KEY(place, date, type, gender)
-                        );"""
-        cursor.execute(conditions_sql)
-        connection.commit()
 
         connection.close()
     except sqlite3.Error:
-        print("Please look into DataProcessing.biathlete create_json_and_db at database creation")
+        print("Please look into database_connection", 77)
     finally:
         connection.close()
 
@@ -76,7 +85,7 @@ def create_json_and_db():
             if blacklist_dict["no_names"]:
                 return
     except IOError:
-        print("Please look into DataProcessing.biathlete create_json_and_db at json creation")
+        print("Please look into database_connection")
 
     # create a json file with empty lists
     no_names = country = languages = hobbies = profession = skis = family = rifle = ammunition = \
@@ -90,7 +99,7 @@ def create_json_and_db():
         with open('../Data/blacklist.json', 'w') as f:
             json.dump(blacklist_dict, f)
     except IOError:
-        print("Please look into DataProcessing.biathlete create_json_and_db at json creation")
+        print("Please look into database_connection")
 
 
 def get_connection():
@@ -149,7 +158,7 @@ def get_json_lists():
         return no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, \
                racesuit, shoes, bindings, skipoles, gloves, wax, goggles
     except IOError:
-        print("Please look into DataProcessing.biathlete get_json_lists()")
+        print("Please look into database_connection.")
 
 
 def set_json_lists(json_list):
@@ -176,4 +185,4 @@ def set_json_lists(json_list):
         with open('../Data/blacklist.json', 'w') as f:
             json.dump(blacklist_dict, f)
     except IOError:
-        print("Please look into DataProcessing.biathlete set_json_lists")
+        print("Please look into database_connection set_json_lists")

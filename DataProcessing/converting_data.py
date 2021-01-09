@@ -11,18 +11,17 @@ import fitz
 
 
 def convert_pdf_to_document(file_list):
-    """This method converts a list of strings (filenames) into a list of 'Document' objects
+    """This method converts a list of strings (filenames) into a list of 'Document' objects.
 
-        Args:
+        :arg:
             file_list (list): list of file names as strings
-        Returns:
+        :return:
             list of 'Document' objects associated to the file names
     """
     if not isinstance(file_list, list):
         raise TypeError
 
     doc_ls = []
-
     for filename in file_list:
         if not isinstance(filename, str):
             raise TypeError
@@ -33,11 +32,11 @@ def convert_pdf_to_document(file_list):
 
 
 def filter_doc(doc_ls):
-    """This method returns a list of documents which are pdfs
+    """This method returns a list of 'Document' objects which are connected to pdfs.
 
-        Args:
+        :arg:
             doc_ls (list): a list of 'Document' objects
-        Returns:
+        :return:
             the input list with the condition that every object in the list is a pdf
             -> a document, which is not a pdf, will be rejected
     """
@@ -50,11 +49,11 @@ def filter_doc(doc_ls):
 
 
 def is_not_pdf(doc_ls):
-    """This method returns a list of documents which are not pdfs
+    """This method returns a list of 'Document' objects which aren't connected to pdfs.
 
-        Args:
+        :arg:
             doc_ls (list): a list of 'Document' objects
-        Returns:
+        :return:
             the input list with the condition that every object in the list is not a pdf
             -> a document, which is a pdf, will be rejected
     """
@@ -67,11 +66,11 @@ def is_not_pdf(doc_ls):
 
 
 def divide_into_pages(pdf_doc):
-    """This method divides every document(pdf) into pages
+    """This method divides every 'Document' (connected to a pdf) into pages.
 
-        Args:
+        :arg:
             pdf_doc (Document): a 'Document' object
-        Returns:
+        :return:
             list of pages of the input document
 
         - For more information about the page class: https://pymupdf.readthedocs.io/en/latest/page.html
@@ -89,11 +88,11 @@ def divide_into_pages(pdf_doc):
 
 
 def from_one_unity_to_float(unity_ls, sep):
-    """This method transforms a string (degree in celsius) list into a float list
+    """This method transforms a string (degree in celsius) list into a float list.
 
-        Args:
-            unity_ls (str list): list with strings with celsius-in-degree values
-            sep: separator for the string split
+        :arg:
+            unity_ls (str list): list with strings in celsius-in-degree format
+            sep: separator for the string
     """
     float_ls = []
     if not isinstance(unity_ls, list):
@@ -109,8 +108,8 @@ def from_one_unity_to_float(unity_ls, sep):
         temp = re.compile(r'-?[0-9]{1,2}[.,][0-9]{1,2}')
         matches = [elem for elem in n_ls if temp.match(elem)]
         if not len(matches) == 1:
-            print('This should not happen', "Please look into from_one_unity_to_float")
-            raise TypeError
+            raise TypeError('This should not happen.'
+                            'Please look into converting_data.from_one_unity_to_float()')
         else:
             matches_str = "".join(matches)  # convert list to string
             matches_str = matches_str.replace(" ", "")
@@ -119,13 +118,19 @@ def from_one_unity_to_float(unity_ls, sep):
         if matches:
             float_ls.append(matches_float)
         else:
-            print("This should not happen. Please look into from_one_unity_to_float")
-            raise TypeError
+            raise TypeError("This should not happen."
+                            "Please look into converting_data.from_one_unity_to_float")
     return float_ls
 
 
 def eliminating_leading_zero(number_as_string):
-    """This method eliminates leading zeros of a string of max. length 2"""
+    """This method eliminates leading zeros of a string of max. length 2.
+
+        :arg:
+            number_as_strings (string): processed string
+        :return:
+            the input string without leading zeros
+    """
     if not isinstance(number_as_string, str):
         raise TypeError
     if len(number_as_string) == 0:

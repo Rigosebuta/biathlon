@@ -3,12 +3,12 @@ from DataProcessing import database_connection as dc
 
 
 def get_all_athletes():
-    """This method gets the name of the athletes from the table 'Athlete' of the database"""
+    """This method gets the name of the athletes from the table 'ATHLETE' of the database."""
 
     connection = dc.get_connection()
     try:
         cursor = connection.cursor()
-        sql_names_country = "SELECT name FROM Athlete"
+        sql_names_country = "SELECT name FROM ATHLETE"
         cursor.execute(sql_names_country)
         rows = cursor.fetchall()
         name_column = []
@@ -21,9 +21,10 @@ def get_all_athletes():
 
 
 def create_athlete(athlete_name):
-    """This method creates a new athlete tuple/row in the database (table = Athlete)
+    """This method creates a new athlete tuple/row in the database (table = Athlete).
 
-        Args:
+        The data is read from the console which is entered by the user.
+        :arg:
             athlete_name (str): name of the athlete
     """
     if not isinstance(athlete_name, str):
@@ -37,17 +38,17 @@ def create_athlete(athlete_name):
         no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
         shoes, bindings, skipoles, gloves, wax, goggles = dc.get_json_lists()
     except TypeError:
-        print("This should work to create an athlete. Please look into get_json_lists()")
+        print("This should work to create an athlete. Please look into converting_data.get_json_lists()")
         return
 
     # input of an athlete's data
     print("Please insert STOP if you misspelled an input before")
-    print("Please try to use same names for same/similar things. If data is not existing"
-          " use NULL")
+    print("Please try to use same names for same/similar things. If data is not existing use NULL")
+
     birthdate_inp = input('Please enter the birthdate (in YYYY-MM-DD as string): ')
 
     print("list of countries: ", country)
-    country_inp = input('Please enter the nationality of the athlete: ')
+    country_inp = input('Please enter the country of the athlete: ')
 
     print("list of languages: ", languages)
     languages_inp = []
@@ -175,12 +176,11 @@ def create_athlete(athlete_name):
 
 
 def update_athlete_db(text_ls):
-    """This method decides for every string in a document if it is a name of an athlete.
+    """This method decides for every string in a document if it's a name of an athlete.
 
-        Args:
+        :arg:
             text_ls (str list): text of a pdf document
-
-        Returns:
+        :return:
             index_list (integer list): indices in text_ls which point to a name of a biathlete
     """
     if not isinstance(text_ls, list):
@@ -190,8 +190,8 @@ def update_athlete_db(text_ls):
             raise TypeError
     index_list = []
     connection = dc.get_connection()
-    for index, text in enumerate(text_ls):
 
+    for index, text in enumerate(text_ls):
         # json values
         no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
         shoes, bindings, skipoles, gloves, wax, goggles = dc.get_json_lists()
@@ -203,6 +203,7 @@ def update_athlete_db(text_ls):
         # !!! Athlete with same names will have the same "ID". We will separate two different athletes
         # with the same name later through tests.
         # This could cause a mistake in the database !!!!!!!!!!!!!
+        # name is already in database
         athlete_names = get_all_athletes()
         if text in athlete_names:
             index_list.append(index)

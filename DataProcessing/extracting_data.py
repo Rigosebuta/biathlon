@@ -1,4 +1,4 @@
-""" This module extract data from the 'Document' objects"""
+""" This module extract data from the 'Document' objects."""
 
 import datetime
 import os
@@ -10,13 +10,13 @@ from DataProcessing import converting_data as cv, biathlete as ba
 
 
 class BiathlonData:
-    """This class assigns to every pdf document data from the pdf document"""
+    """This class assigns to every pdf document data from the pdf document."""
 
     def __init__(self, pdf_doc, organisation):
-        """ declaration of variables which will then be filled with the information assigned to the pdf
+        """ Declaration of variables which will then be filled with the information assigned to the pdf.
 
-        Args:
-            organisation(str): we can't get this information out of the pdf so we have to sort
+        :arg:
+            organisation(str): we can't get this information out of the pdf so we have to presort
             the pdf to organisation groups before we extract data
             pdf_doc (Document): a 'Document' object
 
@@ -95,19 +95,18 @@ class BiathlonData:
             self.get_start_list()
 
     def get_metadata(self):
-        """This method extracts metadata from the document
+        """This method extracts metadata from the document."""
 
-        """
         # get first page of a pdf doc => first page is enough to find out some of the metadata
         page_zero = self.pdf_doc.loadPage(0)
         text_zero = page_zero.getText('text')
 
         # get all lines of the pdf as a string list
-        pages = cv.divide_into_pages(self.pdf_doc)
-        text = ""
-        for i in pages:
-            text = text + i.getText('text')
-        text_ls = text.split("\n")
+        all_pages = cv.divide_into_pages(self.pdf_doc)
+        all_text = ""
+        for p in all_pages:
+            all_text = all_text + p.getText('text')
+        all_text_ls = all_text.split("\n")
 
         # search for description
         description_d = ['Competition Analysis', 'COMPETITION ANALYSIS', 'Competition TestData Summary',
@@ -115,7 +114,7 @@ class BiathlonData:
         self.get_basic_metadata(text_zero, description_d, 'description')
 
         # search for place
-        # get first page of a pdf doc => first page is enough to find out the place
+        # first page is enough to find out the place
         self.get_place(text_zero)
 
         # search for country of place
@@ -145,66 +144,66 @@ class BiathlonData:
 
         if self.metadata['description'] == 'COMPETITION DATA SUMMARY':
             # get number of entries
-            self.get_some_data_summary(text_ls, 'Number of Entries')
+            self.get_some_data_summary(all_text_ls, 'Number of Entries')
 
             # get number of did_not_start
-            self.get_some_data_summary(text_ls, 'Did not start')
+            self.get_some_data_summary(all_text_ls, 'Did not start')
 
             # get number of did_not_finish
-            self.get_some_data_summary(text_ls, 'Did not finish')
+            self.get_some_data_summary(all_text_ls, 'Did not finish')
 
             # get number of lapped biathletes
-            self.get_some_data_summary(text_ls, 'Lapped')
+            self.get_some_data_summary(all_text_ls, 'Lapped')
 
             # get number of disqualified biathletes
-            self.get_some_data_summary(text_ls, 'Disqualified')
+            self.get_some_data_summary(all_text_ls, 'Disqualified')
 
             # get number of disqualified_for_unsportsmanlike_behaviour
-            self.get_some_data_summary(text_ls, 'Disqualified for unsportsmanlike behaviour')
+            self.get_some_data_summary(all_text_ls, 'Disqualified for unsportsmanlike behaviour')
 
             # get number of ranked competitors
-            self.get_some_data_summary(text_ls, 'Ranked')
+            self.get_some_data_summary(all_text_ls, 'Ranked')
 
             # get total length of the course
-            self.get_some_data_summary(text_ls, 'Total Course Length')
+            self.get_some_data_summary(all_text_ls, 'Total Course Length')
 
             # get height difference of the course
-            self.get_some_data_summary(text_ls, 'Height Difference')
+            self.get_some_data_summary(all_text_ls, 'Height Difference')
 
             # get maximum climb
-            self.get_some_data_summary(text_ls, 'Max. Climb')
+            self.get_some_data_summary(all_text_ls, 'Max. Climb')
 
             # get total climb
-            self.get_some_data_summary(text_ls, 'Total Climb')
+            self.get_some_data_summary(all_text_ls, 'Total Climb')
 
             # get level of difficulty
             level_difficulty_d = ['red', 'blue', 'green']
-            self.get_basic_metadata(text, level_difficulty_d, 'level_difficulty')
+            self.get_basic_metadata(all_text, level_difficulty_d, 'level_difficulty')
 
             # get weather conditions (list)
-            self.get_weather(text_ls)
+            self.get_weather(all_text_ls)
 
             # get snow condition (list)
-            self.get_different_weather_conditions(text_ls, 'Snow Condition')
+            self.get_different_weather_conditions(all_text_ls, 'Snow Condition')
 
             # get snow temperature
-            self.get_different_weather_conditions(text_ls, 'Snow Temperature')
+            self.get_different_weather_conditions(all_text_ls, 'Snow Temperature')
 
             # get air_temperature
-            self.get_different_weather_conditions(text_ls, 'Air Temperature')
+            self.get_different_weather_conditions(all_text_ls, 'Air Temperature')
 
             # get humidity
-            self.get_different_weather_conditions(text_ls, 'Humidity')
+            self.get_different_weather_conditions(all_text_ls, 'Humidity')
 
             # get wind_speed and wind direction
-            self.get_different_weather_conditions(text_ls, 'Wind Direction/Speed')
+            self.get_different_weather_conditions(all_text_ls, 'Wind Direction/Speed')
 
         print(self.metadata)
 
     def get_place(self, text_zero):
         """This method searches in document for one of the following places
 
-            Args:
+            :arg:
                 text_zero (str): first page of the document as a string
 
             - If a place matches the string, metadata['place'] will be updated
@@ -261,10 +260,6 @@ class BiathlonData:
                 self.metadata['place'] = pl
                 break
         else:  # gets only executed if no match is found
-            #print('Please update the places or insert it manual (in uppercase)', self.pdf_doc)
-            # print(text_zero)  # if looking in the text is necessary
-            #print(self.pdf_doc.name)
-            #print(os.path.dirname(os.path.abspath(__file__)))
             os.startfile(self.pdf_doc.name)
             inp = input("Please update/enter the place manual (in uppercase):")
             self.get_place(inp)
@@ -272,11 +267,10 @@ class BiathlonData:
     def get_place_country(self, place):
         """This method assigns the country to the place
 
-            Args:
+            :arg:
                 place (str): place where race take place
         """
 
-        place_country = None
         if place in ['ALTENBERG', 'BAYERISCH EISENSTEIN', 'CLAUSTHAL-ZELLERFELD',
                      'GELSENKIRCHEN', 'KALTENBRUNN', 'NOTSCHREI', 'OBERHOF',
                      'OBERWIESENTHAL', 'RUHPOLDING', 'WILLINGEN']:
@@ -327,14 +321,15 @@ class BiathlonData:
         elif place in ['PYEONGCHANG']:
             place_country = 'KOR'
         else:
-            print('Please update the countries / the method. Place could not be assigned to any country')
+            raise Exception('Please update the countries in the get_place_country().'
+                            'The place could not be assigned to any country')
 
         self.metadata['place_country'] = place_country
 
     def get_basic_metadata(self, text_zero, ls, key):
         """This method searches in document for basic metadata
 
-            Args:
+            :arg:
                 text_zero (str): first page of the document as a string
                 ls (str list): possible matches in text_zero
                 key (str): attribute in self.metadata which will be updated
@@ -349,13 +344,32 @@ class BiathlonData:
             if key == 'age_group':
                 self.metadata['age_group'] = 'SENIOR'
             elif key == 'description':
-                print('Please update the description list in get_metadata()', self.pdf_doc)
+                print('Please update the description list in get_basic_metadata()', self.pdf_doc)
+                # gets only executed if no match is found
+                os.startfile(self.pdf_doc.name)
+                desc_inp = input("Please update/enter the description (Competition Analysis, COMPETITION ANALYSIS, "
+                                 "Competition TestData Summary, "
+                                 "COMPETITION DATA SUMMARY, Start List, START LIST) manual (in uppercase):")
+                self.get_basic_metadata(desc_inp, ls, key)
             elif key == 'gender':
-                print('Please look into the gender. Something is really wrong', self.pdf_doc)
+                print('Please look into the gender and get_basic_metadata()', self.pdf_doc)
+                # gets only executed if no match is found
+                os.startfile(self.pdf_doc.name)
+                gender_inp = input("Please update/enter the gender ('WOMEN', 'MEN') manual (in uppercase):")
+                self.get_basic_metadata(gender_inp, ls, key)
             elif key == 'race_type':
                 print('Please update the race_type list in get_metadata()', self.pdf_doc)
+                # gets only executed if no match is found
+                os.startfile(self.pdf_doc.name)
+                race_type_inp = input("Please update/enter the race_type ('SPRINT', 'PURSUIT', 'RELAY', 'INDIVIDUAL', "
+                                      "'MASS START', 'MIXED') manual (in uppercase):")
+                self.get_basic_metadata(race_type_inp, ls, key)
             elif key == 'level_difficulty':
                 print('Please update the level list', self.pdf_doc)
+                # gets only executed if no match is found
+                os.startfile(self.pdf_doc.name)
+                level_inp = input("Please update/enter the level (red, blue, green) manual (in uppercase):")
+                self.get_basic_metadata(level_inp, ls, key)
 
     def get_organisation(self):
         """This method searches a list for the organisation"""
@@ -372,7 +386,7 @@ class BiathlonData:
     def get_race_len(self, text_zero):
         """This method searches in document for the race_type
 
-            Args:
+            :arg:
                 text_zero (str): first page of the document as a string
         """
 
@@ -395,11 +409,17 @@ class BiathlonData:
                 break
         if self.metadata['race_len_km'] is None:
             print('Please update the race_len in km list', self.pdf_doc)
+            os.startfile(self.pdf_doc.name)
+            race_len_inp = input("Please update/enter the race length ('3 X 7.5 km', '4 X 7.5 km', '3 X 6 km', "
+                               "'4 X 6 km', '3x7.5 km', '4x7.5 km', '3x6 km', '4x6 km', '3x7.5 KM', '4x7.5 KM', "
+                               "'3x6 KM', '4x6 KM', '3X7.5 km', '4X7.5 km', '3X6 km', '4X6 km', '10 km', '15 km', "
+                               "'20 km', '12.5 km', '7.5 km', '6 km') manual (in uppercase):")
+            self.get_race_len(race_len_inp)
 
     def get_date(self):
         """This method extracts the date of the race through the pdfs metadata"""
         data_pdf = self.pdf_doc.metadata
-#        print(data_pdf)
+        #        print(data_pdf)
         datum = data_pdf['creationDate']
         try:
             year = int(datum[2:6])
@@ -414,7 +434,7 @@ class BiathlonData:
         """This method searches for the key in the text (document) and
             considers the value in the next line
 
-            Args:
+            :arg:
                 text_ls (str): text of the document as a string list
                 key (str): information which is searched for
         """
@@ -457,7 +477,7 @@ class BiathlonData:
     def get_weather(self, text_ls):
         """This method extracts the weather conditions from the data (pdf file)
 
-            Args:
+            :arg:
                 text_ls (str): text of the document as a string list
 
         """
@@ -478,7 +498,7 @@ class BiathlonData:
     def get_different_weather_conditions(self, text_ls, key):
         """This method extracts additional weather conditions from the data (pdf file)
 
-            Args:
+            :arg:
                 text_ls (str): text of the document as a string list
                 key (str): information which is searched for
         """
@@ -1172,7 +1192,7 @@ class BiathlonData:
         for i in pages:
             text = text + i.getText('text')
         text_ls = text.split("\n")  # array of the lines of the string
-        #print(text_ls)
+        # print(text_ls)
         # update the athlete table in the database
         index_list = ba.update_athlete_db(text_ls)
 

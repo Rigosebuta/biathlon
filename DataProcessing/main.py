@@ -64,7 +64,10 @@ def main():
     for d in doc_ls:
         a.append(ed.BiathlonData(d, 'WORLD CUP'))
     for am in a:
-        dc.data_to_race_table(am)
+        dc.metadata_to_database(am)
+        if am.data is not None:
+            print(am.data.to_string())
+            dc.race_data_to_database(am)
 
     # world_cup_2006_2007 = transform_data(r"C:\Users\Michael\Downloads")
     # transform_data(r"E:\Biathlon 010203")

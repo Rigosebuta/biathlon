@@ -2,7 +2,7 @@
 import json
 import sqlite3
 from DataProcessing import extracting_data as ed
-
+import pandas as pd
 
 def create_json_and_db():
     """This method creates a json file and a database.
@@ -72,7 +72,7 @@ def create_json_and_db():
                     at_end_time VARCHAR(20),
                     race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                     FOREIGN KEY (race_id)
-                        REFERENCES Race (rowid) 
+                        REFERENCES RACE (rowid) 
                     );"""
         cursor.execute(weather_sql)
         connection.commit()
@@ -85,7 +85,7 @@ def create_json_and_db():
                             at_end_time VARCHAR(20),
                             race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                             FOREIGN KEY (race_id)
-                                REFERENCES Race (rowid) 
+                                REFERENCES RACE (rowid) 
                             );"""
         cursor.execute(snow_condition_sql)
         connection.commit()
@@ -98,7 +98,7 @@ def create_json_and_db():
                             at_end_time REAL,
                             race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                             FOREIGN KEY (race_id)
-                                REFERENCES Race (rowid) 
+                                REFERENCES RACE (rowid) 
                             );"""
         cursor.execute(snow_temperature_sql)
         connection.commit()
@@ -111,7 +111,7 @@ def create_json_and_db():
                             at_end_time REAL,
                             race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                             FOREIGN KEY (race_id)
-                                REFERENCES Race (rowid) 
+                                REFERENCES RACE (rowid) 
                             );"""
         cursor.execute(air_temperature_sql)
         connection.commit()
@@ -124,7 +124,7 @@ def create_json_and_db():
                     at_end_time INTEGER,
                     race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                     FOREIGN KEY (race_id)
-                        REFERENCES Race (rowid) 
+                        REFERENCES RACE (rowid) 
                     );"""
         cursor.execute(humidity_sql)
         connection.commit()
@@ -137,7 +137,7 @@ def create_json_and_db():
                             at_end_time VARCHAR(5),
                             race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                             FOREIGN KEY (race_id)
-                                REFERENCES Race (rowid) 
+                                REFERENCES RACE (rowid) 
                             );"""
         cursor.execute(wind_direction_sql)
         connection.commit()
@@ -150,7 +150,7 @@ def create_json_and_db():
                         at_end_time REAL,
                         race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                         FOREIGN KEY (race_id)
-                            REFERENCES Race (rowid) 
+                            REFERENCES RACE (rowid) 
                         );"""
         cursor.execute(wind_speed_sql)
         connection.commit()
@@ -164,10 +164,118 @@ def create_json_and_db():
                     level_difficulty VARCHAR(20),
                     race_id INTEGER NOT NULL UNIQUE PRIMARY KEY,
                     FOREIGN KEY (race_id)
-                        REFERENCES Race (rowid) 
+                        REFERENCES RACE (rowid) 
                     );"""
         cursor.execute(course_sql)
         connection.commit()
+
+        race_data_sql = """
+                        CREATE TABLE IF NOT EXISTS RACE_DATA(
+                        name VARCHAR(40),
+                        country VARCHAR(3),
+                        total_misses INTEGER,
+                        overall_time VARCHAR(20),
+                        overall_time_behind VARCHAR(20) ,
+                        overall_rank INTEGER,
+                        cumulative_time_loop_one VARCHAR(20),
+                        cumulative_time_loop_one_behind VARCHAR(20),
+                        cumulative_time_loop_one_rank INTEGER,
+                        cumulative_time_loop_two VARCHAR(20),
+                        cumulative_time_loop_two_behind VARCHAR(20),
+                        cumulative_time_loop_two_rank INTEGER,
+                        cumulative_time_loop_three VARCHAR(20),
+                        cumulative_time_loop_three_behind VARCHAR(20),
+                        cumulative_time_loop_three_rank INTEGER,
+                        cumulative_time_loop_four VARCHAR(20),
+                        cumulative_time_loop_four_behind VARCHAR(20), 
+                        cumulative_time_loop_four_rank INTEGER,
+                        cumulative_time_overall VARCHAR(20),
+                        cumulative_time_overall_behind VARCHAR(20),
+                        cumulative_time_overall_rank INTEGER,
+                        loop_time_loop_one VARCHAR(20),
+                        loop_time_loop_one_behind VARCHAR(20),
+                        loop_time_loop_one_rank INTEGER, 
+                        loop_time_loop_two VARCHAR(20),
+                        loop_time_loop_two_behind VARCHAR(20),
+                        loop_time_loop_two_rank INTEGER,
+                        loop_time_loop_three VARCHAR(20),
+                        loop_time_loop_three_behind VARCHAR(20),
+                        loop_time_loop_three_rank INTEGER,
+                        loop_time_loop_four VARCHAR(20),
+                        loop_time_loop_four_behind VARCHAR(20), 
+                        loop_time_loop_four_rank INTEGER,
+                        loop_time_loop_five VARCHAR(20),
+                        loop_time_loop_five_behind VARCHAR(20), 
+                        loop_time_loop_five_rank INTEGER,
+                        shooting_misses_loop_one INTEGER,
+                        shooting_time_loop_one VARCHAR(20),
+                        shooting_time_loop_one_behind VARCHAR(20),
+                        shooting_loop_one_rank INTEGER,
+                        shooting_misses_loop_two INTEGER,
+                        shooting_time_loop_two VARCHAR(20),
+                        shooting_time_loop_two_behind VARCHAR(20),
+                        shooting_loop_two_rank INTEGER,
+                        shooting_misses_loop_three INTEGER,
+                        shooting_time_loop_three VARCHAR(20),
+                        shooting_time_loop_three_behind VARCHAR(20),
+                        shooting_loop_three_rank INTEGER,
+                        shooting_misses_loop_four INTEGER,
+                        shooting_time_loop_four VARCHAR(20),
+                        shooting_time_loop_four_behind VARCHAR(20),
+                        shooting_loop_four_rank INTEGER,
+                        shooting_misses_overall INTEGER,
+                        shooting_time_overall VARCHAR(20),
+                        shooting_time_overall_behind VARCHAR(20),
+                        shooting_loop_overall_rank INTEGER,
+                        range_time_loop_one VARCHAR(20),
+                        range_time_loop_one_behind VARCHAR(20),
+                        range_time_loop_one_rank INTEGER,
+                        range_time_loop_two VARCHAR(20),
+                        range_time_loop_two_behind VARCHAR(20),
+                        range_time_loop_two_rank INTEGER,
+                        range_time_loop_three VARCHAR(20),
+                        range_time_loop_three_behind VARCHAR(20),
+                        range_time_loop_three_rank INTEGER,
+                        range_time_loop_four VARCHAR(20),
+                        range_time_loop_four_behind VARCHAR(20),
+                        range_time_loop_four_rank INTEGER,
+                        range_time_overall VARCHAR(20),
+                        range_time_overall_behind VARCHAR(20),
+                        range_time_overall_rank INTEGER,
+                        course_time_loop_one VARCHAR(20),
+                        course_time_loop_one_behind VARCHAR(20),
+                        course_time_loop_one_rank INTEGER,
+                        course_time_loop_two VARCHAR(20),
+                        course_time_loop_two_behind VARCHAR(20),
+                        course_time_loop_two_rank INTEGER,
+                        course_time_loop_three VARCHAR(20),
+                        course_time_loop_three_behind VARCHAR(20),
+                        course_time_loop_three_rank INTEGER,
+                        course_time_loop_four VARCHAR(20),
+                        course_time_loop_four_behind VARCHAR(20),
+                        course_time_loop_four_rank INTEGER,
+                        course_time_loop_five VARCHAR(20),
+                        course_time_loop_five_behind VARCHAR(20),
+                        course_time_loop_five_rank INTEGER,
+                        course_time_overall VARCHAR(20),
+                        course_time_overall_behind VARCHAR(20),
+                        course_time_overall_rank INTEGER,
+                        penalty_time_loop_one VARCHAR(20), 
+                        penalty_time_loop_two VARCHAR(20), 
+                        penalty_time_loop_three VARCHAR(20), 
+                        penalty_time_loop_four VARCHAR(20), 
+                        penalty_time_loop_overall VARCHAR(20), 
+                        race_id INTEGER NOT NULL, 
+                        athlete_id INTEGER NOT NULL,
+                        FOREIGN KEY (race_id)
+                            REFERENCES RACE (rowid)
+                        FOREIGN KEY (athlete_id)
+                            REFERENCES ATHLETE (rowid)
+                        PRIMARY KEY(race_id, athlete_id)
+                        );"""
+        cursor.execute(race_data_sql)
+        connection.commit()
+
         connection.close()
     except sqlite3.Error as serr:
         print("Please look into database_connection.create_json_and_db():", serr)
@@ -415,7 +523,7 @@ def create_race(biathlon_obj):
     return race_id
 
 
-def data_to_race_table(biathlon_obj):
+def metadata_to_database(biathlon_obj):
     """This method updates the database table Race with metadata from a pdf file.
 
         1. metadata value is None:
@@ -612,3 +720,27 @@ def data_to_race_table(biathlon_obj):
             if i[0] != i[1]:
                 raise Exception('Difference between database and a BiathlonData object'
                                 'This should not happen. Please look into data_to_database')
+
+
+def race_data_to_database(biathlon_obj):
+
+    if not isinstance(biathlon_obj, ed.BiathlonData):
+        return
+    if biathlon_obj.data is None or not isinstance(biathlon_obj.data, pd.DataFrame):
+        return
+    race_id = create_race(biathlon_obj)
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    for index, row in biathlon_obj.data.iterrows():
+        conn = get_connection()
+        cursor = conn.cursor()
+        get_athleteid_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
+        cursor.execute(get_athleteid_query, row[0])
+        athlete_id = cursor.fetchall()
+        print(index, row[0])
+        print(type(row))
+        print(athlete_id)
+
+
+    conn.close()

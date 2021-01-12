@@ -4,6 +4,7 @@ import sqlite3
 from DataProcessing import extracting_data as ed
 import pandas as pd
 
+
 def create_json_and_db():
     """This method creates a json file and a database.
 
@@ -226,7 +227,7 @@ def create_json_and_db():
                         shooting_misses_overall INTEGER,
                         shooting_time_overall VARCHAR(20),
                         shooting_time_overall_behind VARCHAR(20),
-                        shooting_loop_overall_rank INTEGER,
+                        shooting_overall_rank INTEGER,
                         range_time_loop_one VARCHAR(20),
                         range_time_loop_one_behind VARCHAR(20),
                         range_time_loop_one_rank INTEGER,
@@ -264,7 +265,7 @@ def create_json_and_db():
                         penalty_time_loop_two VARCHAR(20), 
                         penalty_time_loop_three VARCHAR(20), 
                         penalty_time_loop_four VARCHAR(20), 
-                        penalty_time_loop_overall VARCHAR(20), 
+                        penalty_time_overall VARCHAR(20), 
                         race_id INTEGER NOT NULL, 
                         athlete_id INTEGER NOT NULL,
                         FOREIGN KEY (race_id)
@@ -545,7 +546,6 @@ def metadata_to_database(biathlon_obj):
     conn = get_connection()
     cursor = conn.cursor()
     race_id = create_race(biathlon_obj)
-    print(race_id)
     if not isinstance(race_id, int):
         raise ValueError
 
@@ -660,8 +660,6 @@ def metadata_to_database(biathlon_obj):
                 cursor.execute(sql_query_3, (i[0], race_id))
                 conn.commit()
             elif index == 8:
-                print(i[0][0])
-                print(type(i[0]))
                 sql_query_3 = "UPDATE WEATHER SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
@@ -723,24 +721,515 @@ def metadata_to_database(biathlon_obj):
 
 
 def race_data_to_database(biathlon_obj):
-
+    """This method transforms the data from a pd.Dataframe to the database table RACE_DATA"""
     if not isinstance(biathlon_obj, ed.BiathlonData):
         return
     if biathlon_obj.data is None or not isinstance(biathlon_obj.data, pd.DataFrame):
         return
+
+    # if it doesn't already exist create_race() creates a new tuple in the database table RACE
+    # and returns then the race_id associated to that tuple
+    # if it does exist it returns the race_id associated to the fitting tuple
     race_id = create_race(biathlon_obj)
+
     conn = get_connection()
     cursor = conn.cursor()
 
+    # looping through the race_data which is stored in a pd.Dataframe
     for index, row in biathlon_obj.data.iterrows():
-        conn = get_connection()
-        cursor = conn.cursor()
-        get_athleteid_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
-        cursor.execute(get_athleteid_query, row[0])
+
+        # get athlete_id of the athlete which is connected to a row in the pd.Dataframe
+        get_athlete_id_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
+        cursor.execute(get_athlete_id_query, (row[0],))
         athlete_id = cursor.fetchall()
-        print(index, row[0])
-        print(type(row))
-        print(athlete_id)
+        if not athlete_id:
+            raise Exception("This should not happen. Please make sure every athlete that finished in this"
+                            "race already has his tuple in the table ATHLETE.")
+        # checks if a tuple with the primary keys athlete_id and race_id already exists  in RACE_DATA
+        # and creates one if not
+        get_race_data_rows = "SELECT * FROM RACE_DATA WHERE athlete_id = ? AND race_id = ?"
+        cursor.execute(get_race_data_rows, (athlete_id, race_id))
+        rows_race_data = cursor.fetchall()
+        if not rows_race_data:  # create rows if they don't exist yet
+            create_race_instance_query = "INSERT INTO RACE_DATA (athlete_id, race_id)" \
+                                         "VALUES (?,?);"
+            cursor.execute(create_race_instance_query, (athlete_id, race_id))
+            conn.commit()
 
-
+        # only if the value in the pd.Dataframe row isn't NaN we insert it into the database
+        row_filtered = row.isna()
+        # There is probably a faster way to code this
+        for col, b in enumerate(zip(row_filtered, row)):
+            if b[0]:  # value in this row and column is NaN
+                continue
+            if col == 0:
+                insert_race_data_query = "UPDATE RACE_DATA SET name = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 1:
+                insert_race_data_query = "UPDATE RACE_DATA SET country = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 2:
+                insert_race_data_query = "UPDATE RACE_DATA SET total_misses = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 3:
+                insert_race_data_query = "UPDATE RACE_DATA SET overall_time = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 4:
+                insert_race_data_query = "UPDATE RACE_DATA SET overall_time_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 5:
+                insert_race_data_query = "UPDATE RACE_DATA SET overall_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 6:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 7:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_one_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 8:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_one_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 9:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 10:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_two_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 11:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_two_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 12:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 13:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_three_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 14:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_three_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 15:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 16:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_four_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 17:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_loop_four_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 18:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_overall = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 19:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_overall_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 20:
+                insert_race_data_query = "UPDATE RACE_DATA SET cumulative_time_overall_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 21:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 22:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_one_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 23:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_one_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 24:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 25:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_two_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 26:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_two_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 27:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 28:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_three_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 29:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_three_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 30:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 31:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_four_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 32:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_four_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 33:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_five = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 34:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_five_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 35:
+                insert_race_data_query = "UPDATE RACE_DATA SET loop_time_loop_five_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 36:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_misses_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 37:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 38:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_one_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 39:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_loop_one_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 40:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_misses_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 41:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 42:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_two_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 43:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_loop_two_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 44:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_misses_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 45:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 46:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_three_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 47:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_loop_three_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 48:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_misses_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 49:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 50:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_loop_four_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 51:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_loop_four_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 52:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_misses_overall = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 53:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_overall = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 54:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_time_overall_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 55:
+                insert_race_data_query = "UPDATE RACE_DATA SET shooting_overall_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 56:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 57:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_one_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 58:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_one_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 59:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 60:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_two_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 61:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_two_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 62:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 63:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_three_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 64:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_three_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 65:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 66:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_four_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 67:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_loop_four_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 68:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_overall = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 69:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_overall_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 70:
+                insert_race_data_query = "UPDATE RACE_DATA SET range_time_overall_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 71:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 72:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_one_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 73:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_one_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 74:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 75:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_two_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 76:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_two_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 77:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 78:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_three_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 79:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_three_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 80:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 81:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_four_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 82:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_four_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 83:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_five = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 84:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_five_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 85:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_loop_five_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 86:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_overall = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 87:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_overall_behind = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 88:
+                insert_race_data_query = "UPDATE RACE_DATA SET course_time_overall_rank = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 89:
+                insert_race_data_query = "UPDATE RACE_DATA SET penalty_time_loop_one = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 90:
+                insert_race_data_query = "UPDATE RACE_DATA SET penalty_time_loop_two = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 91:
+                insert_race_data_query = "UPDATE RACE_DATA SET penalty_time_loop_three = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 92:
+                insert_race_data_query = "UPDATE RACE_DATA SET penalty_time_loop_four = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
+            elif col == 93:
+                insert_race_data_query = "UPDATE RACE_DATA SET penalty_time_overall = ? " \
+                                         "WHERE athlete_id = ? AND race_id = ?;"
+                cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
+                conn.commit()
     conn.close()

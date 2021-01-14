@@ -40,6 +40,7 @@ def create_json_and_db():
                     gender INTEGER,
                     birthplace VARCHAR(100),
                     residence VARCHAR(100),
+                    birthdate VARCHAR(50), 
                     PRIMARY KEY(name, birthdate, country)
                     );"""
         cursor.execute(athlete_sql)
@@ -628,91 +629,91 @@ def metadata_to_database(biathlon_obj):
             # database has a NULL/None value and biathlon_object.metadata has a usable value
             # There is probably a faster way to code this. !!!!!!!!!!!!!!!!!
             if index == 0:
-                sql_query_3 = "UPDATE RACE SET race_len_km = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET race_len_km = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 1:
-                sql_query_3 = "UPDATE RACE SET number_of_entries = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET number_of_entries = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 2:
-                sql_query_3 = "UPDATE RACE SET did_not_start = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET did_not_start = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 3:
-                sql_query_3 = "UPDATE RACE SET did_not_finish = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET did_not_finish = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 4:
-                sql_query_3 = "UPDATE RACE SET lapped = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET lapped = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 5:
-                sql_query_3 = "UPDATE RACE SET disqualified = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET disqualified = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 6:
-                sql_query_3 = "UPDATE RACE SET disqualified_for_unsportsmanlike_behaviour = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET disqualified_for_unsportsmanlike_behaviour = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 7:
-                sql_query_3 = "UPDATE RACE SET ranked = ?  WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE RACE SET ranked = ?  WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 8:
-                sql_query_3 = "UPDATE WEATHER SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE WEATHER SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 9:
-                sql_query_3 = "UPDATE SNOW_CONDITION SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE SNOW_CONDITION SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 10:
-                sql_query_3 = "UPDATE SNOW_TEMPERATURE SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE SNOW_TEMPERATURE SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 11:
-                sql_query_3 = "UPDATE AIR_TEMPERATURE SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE AIR_TEMPERATURE SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 12:
-                sql_query_3 = "UPDATE HUMIDITY SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE HUMIDITY SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 13:
-                sql_query_3 = "UPDATE WIND_DIRECTION SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE WIND_DIRECTION SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 14:
-                sql_query_3 = "UPDATE WIND_SPEED SET thirty_min_before_start = ?, at_start_time = ?, " \
+                update_query = "UPDATE WIND_SPEED SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
-                cursor.execute(sql_query_3, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
+                cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
             elif index == 15:
-                sql_query_3 = "UPDATE COURSE SET total_course_length = ? WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE COURSE SET total_course_length = ? WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 16:
-                sql_query_3 = "UPDATE COURSE SET height_difference = ? WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE COURSE SET height_difference = ? WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 17:
-                sql_query_3 = "UPDATE COURSE SET max_climb = ? WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE COURSE SET max_climb = ? WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 18:
-                sql_query_3 = "UPDATE COURSE SET total_climb = ? WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE COURSE SET total_climb = ? WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 19:
-                sql_query_3 = "UPDATE COURSE SET level_difficulty = ? WHERE rowid = ?;"
-                cursor.execute(sql_query_3, (i[0], race_id))
+                update_query = "UPDATE COURSE SET level_difficulty = ? WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
         else:
             if i[0] != i[1]:
@@ -737,10 +738,10 @@ def race_data_to_database(biathlon_obj):
 
     # looping through the race_data which is stored in a pd.Dataframe
     for index, row in biathlon_obj.data.iterrows():
-
+        name = row[0].replace("-", " ")
         # get athlete_id of the athlete which is connected to a row in the pd.Dataframe
         get_athlete_id_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
-        cursor.execute(get_athlete_id_query, (row[0],))
+        cursor.execute(get_athlete_id_query, (name,))
         athlete_id = cursor.fetchall()
         if not athlete_id:
             raise Exception("This should not happen. Please make sure every athlete that finished in this"
@@ -1233,3 +1234,4 @@ def race_data_to_database(biathlon_obj):
                 cursor.execute(insert_race_data_query, (b[1], athlete_id, race_id))
                 conn.commit()
     conn.close()
+

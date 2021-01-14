@@ -1,3 +1,4 @@
+import re
 import sqlite3
 from DataProcessing import database_connection as dc
 
@@ -20,6 +21,7 @@ def get_all_athletes():
         return None
 
 
+# This method can be used to do sql injections. It's the users responsibility to not do this.
 def create_athlete(athlete_name):
     """This method creates a new athlete tuple/row in the database (table = Athlete).
 
@@ -31,8 +33,6 @@ def create_athlete(athlete_name):
         raise TypeError
 
     print("This is the athlete's name we want to create: ", athlete_name)
-    connection = dc.get_connection()
-
     # json values
     try:
         no_names, country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit, \
@@ -46,9 +46,19 @@ def create_athlete(athlete_name):
     print("Please try to use same names for same/similar things. If data is not existing use NULL")
 
     birthdate_inp = input('Please enter the birthdate (in YYYY-MM-DD as string): ')
+    pattern = re.compile(r"\d{4}-\d{2}-\d{2}")
+    if (not pattern.match(birthdate_inp)) and (not birthdate_inp == 'NULL'):
+        print("Wrong birthday input! Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
 
     print("list of countries: ", country)
     country_inp = input('Please enter the country of the athlete: ')
+    pattern = re.compile(r"\w{3}")
+    if (not pattern.match(country_inp)) and (not country_inp == 'NULL'):
+        print("Wrong country input! Input has to have three characters. Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
 
     print("list of languages: ", languages)
     languages_inp = []
@@ -58,6 +68,8 @@ def create_athlete(athlete_name):
             languages_inp.append(input('Please enter another language of the athlete: '))
         else:
             break
+    if not languages_inp:
+        languages_inp.append('NULL')
 
     print("list of hobbies: ", hobbies)
     hobbies_inp = []
@@ -67,16 +79,38 @@ def create_athlete(athlete_name):
             hobbies_inp.append(input('Please enter another hobby of the athlete: '))
         else:
             break
+    if not hobbies_inp:
+        hobbies_inp.append('NULL')
 
     birthplace_inp = input('Please enter the birthplace of the athlete: ')
+    pattern = re.compile(r"\w{1,50}")
+    if (not pattern.match(birthplace_inp)) and (not birthplace_inp == 'NULL'):
+        print("Invalid birthplace input! Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
 
     residence_inp = input('Please enter the residence of the athlete: ')
+    pattern = re.compile(r"\w{1,50}")
+    if (not pattern.match(residence_inp)) and (not residence_inp == 'NULL'):
+        print("Invalid residence input! Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
 
     print("list of professions: ", profession)
     profession_inp = input('Please enter the profession of the athlete: ')
+    pattern = re.compile(r"\w{1,30}")
+    if (not pattern.match(profession_inp)) and (not profession_inp == 'NULL'):
+        print("Invalid profession input! Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
 
     print("list of family types: ", family)
     family_inp = input('Please enter the family status of the athlete: ')
+    pattern = re.compile(r"\w{1,20}")
+    if (not pattern.match(family_inp)) and (not family_inp == 'NULL'):
+        print("Invalid family input! Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
 
     print("list of skis: ", skis)
     skis_inp = input('Please enter the company which provides skis for the athlete: ')
@@ -128,9 +162,16 @@ def create_athlete(athlete_name):
         create_athlete(athlete_name)
         return
 
+    died_inp = input('If dead please enter date, otherwise NULL: ')
+    pattern = re.compile(r"\d{4}[-]\d{2}[-]\d{2}")
+    if (not pattern.match(died_inp)) and (not died_inp == 'NULL'):
+        print("Wrong date of death input! Please try again.")
+        create_athlete(athlete_name)  # try again
+        return
+
     current_ls = [country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit,
                   shoes, bindings, skipoles, gloves, wax, goggles]
-    update_ls = [country_inp, languages_inp, hobbies_inp, birthplace_inp, residence_inp, profession_inp,
+    update_ls = [country_inp, languages_inp, hobbies_inp, profession_inp,
                  family_inp, skis_inp, rifle_inp, ammunition_inp, racesuit_inp, shoes_inp, bindings_inp,
                  skipoles_inp, gloves_inp, wax_inp, goggles_inp]
 
@@ -163,12 +204,13 @@ def create_athlete(athlete_name):
     insert_tuple = (athlete_name, birthdate_inp, country_inp, str(languages_inp), str(hobbies_inp),
                     profession_inp, family_inp, skis_inp, rifle_inp, ammunition_inp,
                     racesuit_inp, shoes_inp, bindings_inp, skipoles_inp, gloves_inp, wax_inp, goggles_inp,
-                    size_inp, weight_inp, gender_inp, birthplace_inp, residence_inp)
+                    size_inp, weight_inp, gender_inp, birthplace_inp, residence_inp, died_inp)
 
+    connection = dc.get_connection()
     sql_insert = """INSERT INTO Athlete(name, birthdate, country, languages, hobbies, profession, family,
                      skis, rifle, ammunition, racesuit, shoes, bindings, skipoles, gloves, wax, goggles,
-                     size, weight, gender, birthplace, residence)
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+                     size, weight, gender, birthplace, residence, died)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     cursor = connection.cursor()
     cursor.execute(sql_insert, insert_tuple)
     connection.commit()
@@ -205,6 +247,7 @@ def update_athlete_db(text_ls):
         # This could cause a mistake in the database !!!!!!!!!!!!!
         # name is already in database
         athlete_names = get_all_athletes()
+        text = text.replace("-", " ")
         if text in athlete_names:
             index_list.append(index)
             continue

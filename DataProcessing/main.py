@@ -56,20 +56,17 @@ def main():
     dc.create_json_and_db()
 
     # biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', "WORLD CUP")
-    doc_ls = cd.convert_pdf_to_document(
-        [r'C:\Users\Michael\Documents\python_projects\biathlon\Tests\BT_C77D_1.0(5).pdf',
-         r'C:\Users\Michael\Documents\python_projects\biathlon\Tests\BT_C51C_1.0.pdf',
-         r'C:\Users\Michael\Documents\python_projects\biathlon\Tests\BT_C82_1.0.pdf'])
-    biathlon_ls = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', 'WORLD CUP')
+    #biathlon_ls = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', 'WORLD CUP')
 
+    biathlon_ls = transform_data(r"C:\Users\Michael\Documents\python_projects\biathlon\DataProcessing", 'WORLD CUP')
     for doc in biathlon_ls:
         print(doc.metadata)
         dc.metadata_to_database(doc)
         if doc.data is not None:
             print(doc.data.to_string())
             dc.race_data_to_database(doc)
-        if doc.start_list is not None:
-            dc.start_list_to_database(doc)
+      #  if doc.start_list is not None:
+       #     dc.start_list_to_database(doc)
 
     # world_cup_2006_2007 = transform_data(r"C:\Users\Michael\Downloads")
     # transform_data(r"E:\Biathlon 010203")

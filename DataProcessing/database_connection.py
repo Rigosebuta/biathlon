@@ -40,7 +40,8 @@ def create_json_and_db():
                     gender INTEGER,
                     birthplace VARCHAR(100),
                     residence VARCHAR(100),
-                    birthdate VARCHAR(50), 
+                    died VARCHAR(50), 
+                    cause_of_death VARCHAR(50), 
                     PRIMARY KEY(name, birthdate, country)
                     );"""
         cursor.execute(athlete_sql)
@@ -742,7 +743,8 @@ def race_data_to_database(biathlon_obj):
         # get athlete_id of the athlete which is connected to a row in the pd.Dataframe
         get_athlete_id_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
         cursor.execute(get_athlete_id_query, (name,))
-        athlete_id = cursor.fetchall()
+        athlete_id = int(cursor.fetchall()[0][0])
+        print('athlete with athlete_id is going to be read to the database: ', athlete_id)
         if not athlete_id:
             raise Exception("This should not happen. Please make sure every athlete that finished in this"
                             "race already has his tuple in the table ATHLETE.")

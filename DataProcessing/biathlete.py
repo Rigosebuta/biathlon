@@ -169,6 +169,8 @@ def create_athlete(athlete_name):
         create_athlete(athlete_name)  # try again
         return
 
+    cause_of_death_inp = input('Please enter the cause_of_death which of the athlete: ')
+
     current_ls = [country, languages, hobbies, profession, family, skis, rifle, ammunition, racesuit,
                   shoes, bindings, skipoles, gloves, wax, goggles]
     update_ls = [country_inp, languages_inp, hobbies_inp, profession_inp,
@@ -204,13 +206,14 @@ def create_athlete(athlete_name):
     insert_tuple = (athlete_name, birthdate_inp, country_inp, str(languages_inp), str(hobbies_inp),
                     profession_inp, family_inp, skis_inp, rifle_inp, ammunition_inp,
                     racesuit_inp, shoes_inp, bindings_inp, skipoles_inp, gloves_inp, wax_inp, goggles_inp,
-                    size_inp, weight_inp, gender_inp, birthplace_inp, residence_inp, died_inp)
+                    size_inp, weight_inp, gender_inp, birthplace_inp, residence_inp, died_inp,
+                    cause_of_death_inp)
 
     connection = dc.get_connection()
     sql_insert = """INSERT INTO Athlete(name, birthdate, country, languages, hobbies, profession, family,
                      skis, rifle, ammunition, racesuit, shoes, bindings, skipoles, gloves, wax, goggles,
-                     size, weight, gender, birthplace, residence, died)
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+                     size, weight, gender, birthplace, residence, died, cause_of_death)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     cursor = connection.cursor()
     cursor.execute(sql_insert, insert_tuple)
     connection.commit()

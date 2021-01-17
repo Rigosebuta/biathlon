@@ -65,8 +65,8 @@ def main():
         if doc.data is not None:
             print(doc.data.to_string())
             dc.race_data_to_database(doc)
-      #  if doc.start_list is not None:
-       #     dc.start_list_to_database(doc)
+        if doc.start_list is not None:
+            dc.start_list_to_database(doc)
 
     # world_cup_2006_2007 = transform_data(r"C:\Users\Michael\Downloads")
     # transform_data(r"E:\Biathlon 010203")

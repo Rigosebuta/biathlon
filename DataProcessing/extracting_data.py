@@ -83,7 +83,8 @@ class BiathlonData:
                          'weather': None, 'snow_condition': None, 'snow_temperature': None,
                          'air_temperature': None, 'humidity': None, 'wind_direction': None,
                          'wind_speed': None, 'total_course_length': None, 'height_difference': None,
-                         'max_climb': None, 'total_climb': None, 'level_difficulty': None}
+                         'max_climb': None, 'total_climb': None, 'level_difficulty': None,
+                         'race_start': None}
         self.get_metadata()
 
         self.data = None
@@ -197,8 +198,9 @@ class BiathlonData:
 
             # get wind_speed and wind direction
             self.get_different_weather_conditions(all_text_ls, 'Wind Direction/Speed')
-
-        print(self.metadata)
+        elif self.metadata['description'] == 'START LIST':
+            # get race_start
+            self.get_race_start(all_text_ls)
 
     def get_place(self, text_zero):
         """This method searches in document for one of the following places
@@ -428,7 +430,10 @@ class BiathlonData:
             #            print(datetime.date(year, month, day))!!!!!!!!!!!!!!!!!!!!!!!!!!!
             self.metadata['date'] = datetime.date(year, month, day)
         except TypeError:
-            print('This should not happen. Please check the method get_date')
+            date_inp = input('Please enter the date (in YYYY-MM-DD as a string): ')
+            pattern = re.compile(r"\d{4}-\d{2}-\d{2}")
+            if not pattern.match(date_inp):
+                raise ValueError('Date input had the wrong structure.')
 
     def get_some_data_summary(self, text_ls, key):
         """This method searches for the key in the text (document) and
@@ -543,6 +548,17 @@ class BiathlonData:
                 wind_speed = cv.from_one_unity_to_float(weather_ls, " ")
                 self.metadata['wind_speed'] = wind_speed
 
+    def get_race_start(self, all_text_ls):
+
+        start_time_ls  = ['START TIME', 'Start Time']
+        for st in start_time_ls:
+            for pos, text in enumerate(all_text_ls):
+                match = re.search(st, text)
+                if match:
+                    text_split = text.split(" ")[3]
+                    self.metadata['race_start'] = text_split
+                    break
+
     def sprint_data(self, text_ls, index_list, minimum_limit):
         """This method extracts specific race data from a biathlete of a SPRINT race (e.g. interim times)"""
         # divide into a index list of athletes who finished the race properly and those who didn't
@@ -554,8 +570,8 @@ class BiathlonData:
 
         j = 0
         for elem in in_evaluation:
-            # this try construct is enough because one it is in the wrong order there is following a
-            # ValueError unless
+            # this try construct is enough because once it is in the wrong order there is following a
+            # ValueError
             try:
                 # name
                 name = text_ls[elem]
@@ -784,8 +800,7 @@ class BiathlonData:
                 # course time overall rank
                 course_time_overall_rank = text_ls[elem + 61].replace("=", "")
                 self.data.iat[j, 88] = int(course_time_overall_rank)
-                # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
-                # GESAMT PENALTY TIME = EINFACH ADDDIEREN
+
             except ValueError:
                 print('Please insert the data for {} manual.'.format(text_ls[elem]))
                 j += 1
@@ -793,414 +808,18 @@ class BiathlonData:
             j += 1
         self.data = self.data.dropna(axis=0, how='all', thresh=None, subset=None, inplace=False)
 
-    def pursuit_data(self, text_ls, index_list, minimum_limit):
-        """This method extracts specific race data from a biathlete of a PURSUIT (MASS START)
+    def single_races(self, text_ls, index_list, minimum_limit, isindividual):
+        """This method extracts specific race data from a biathlete of a PURSUIT (MASS START, INDIVIDUAL)
          race (e.g. interim times)"""
 
         for k, index_athlete in enumerate(index_list):
             if index_athlete >= minimum_limit:
                 in_evaluation = index_list[:k]
                 break
-        j = 0
-        for elem in in_evaluation:
-            try:
-                # name
-                name = text_ls[elem]
-                self.data.iat[j, 0] = name
+        add_indiv = 0
+        if isindividual:
+            add_indiv = 16
 
-                # country
-                country = text_ls[elem + 1]
-                self.data.iat[j, 1] = country
-
-                # total misses
-                total_misses = text_ls[elem + 2]
-                self.data.iat[j, 2] = int(total_misses)
-
-                # overall time
-                overall_time = text_ls[elem + 3]
-                self.data.iat[j, 3] = overall_time
-
-                # overall time behind
-                overall_time_behind = text_ls[elem + 4]
-                self.data.iat[j, 4] = overall_time_behind
-
-                # overall rank
-                overall_rank = text_ls[elem + 5].replace('=', "")
-                self.data.iat[j, 5] = int(overall_rank)
-
-                # cumulative time loop 1
-                cumulative_time_loop_1 = text_ls[elem + 7]
-                self.data.iat[j, 6] = cumulative_time_loop_1
-
-                # cumulative time loop 1 behind
-                cumulative_time_loop_1_behind = text_ls[elem + 8]
-                self.data.iat[j, 7] = cumulative_time_loop_1_behind
-
-                # cumulative time loop 1 rank
-                cumulative_time_loop_1_rank = text_ls[elem + 9].replace('=', "")
-                self.data.iat[j, 8] = int(cumulative_time_loop_1_rank)
-
-                # cumulative time loop 2
-                cumulative_time_loop_2 = text_ls[elem + 10]
-                self.data.iat[j, 9] = cumulative_time_loop_2
-
-                # cumulative time loop 2 behind
-                cumulative_time_loop_2_behind = text_ls[elem + 11]
-                self.data.iat[j, 10] = cumulative_time_loop_2_behind
-
-                # cumulative time loop 2 rank
-                cumulative_time_loop_2_rank = text_ls[elem + 12].replace('=', "")
-                self.data.iat[j, 11] = int(cumulative_time_loop_2_rank)
-
-                # cumulative time loop 3
-                cumulative_time_loop_3 = text_ls[elem + 13]
-                self.data.iat[j, 12] = cumulative_time_loop_3
-
-                # cumulative time loop 3 behind
-                cumulative_time_loop_3_behind = text_ls[elem + 14]
-                self.data.iat[j, 13] = cumulative_time_loop_3_behind
-
-                # cumulative time loop 3 rank
-                cumulative_time_loop_3_rank = text_ls[elem + 15].replace('=', "")
-                self.data.iat[j, 14] = int(cumulative_time_loop_3_rank)
-
-                # cumulative time loop 4
-                cumulative_time_loop_4 = text_ls[elem + 16]
-                self.data.iat[j, 15] = cumulative_time_loop_4
-
-                # cumulative time loop 4 behind
-                cumulative_time_loop_4_behind = text_ls[elem + 17]
-                self.data.iat[j, 16] = cumulative_time_loop_4_behind
-
-                # cumulative time loop 4 rank
-                cumulative_time_loop_4_rank = text_ls[elem + 18].replace('=', "")
-                self.data.iat[j, 17] = int(cumulative_time_loop_4_rank)
-
-                # cumulative time overall
-                cumulative_time_overall = text_ls[elem + 19]
-                self.data.iat[j, 18] = cumulative_time_overall
-
-                # cumulative time overall behind
-                cumulative_time_overall_behind = text_ls[elem + 20]
-                self.data.iat[j, 19] = cumulative_time_overall_behind
-
-                # cumulative time overall rank
-                cumulative_time_overall_rank = text_ls[elem + 21].replace('=', "")
-                self.data.iat[j, 20] = int(cumulative_time_overall_rank)
-
-                # loop time 1
-                loop_time_1 = text_ls[elem + 23]
-                self.data.iat[j, 21] = loop_time_1
-
-                # loop time 1 behind
-                loop_time_1_behind = text_ls[elem + 24]
-                self.data.iat[j, 22] = loop_time_1_behind
-
-                # loop time 1 rank
-                loop_time_1_rank = text_ls[elem + 25].replace('=', "")
-                self.data.iat[j, 23] = int(loop_time_1_rank)
-
-                # loop time 2
-                loop_time_2 = text_ls[elem + 26]
-                self.data.iat[j, 24] = loop_time_2
-
-                # loop time 2 behind
-                loop_time_2_behind = text_ls[elem + 27]
-                self.data.iat[j, 25] = loop_time_2_behind
-
-                # loop time 2 rank
-                loop_time_2_rank = text_ls[elem + 28].replace('=', "")
-                self.data.iat[j, 26] = int(loop_time_2_rank)
-
-                # loop time 3
-                loop_time_3 = text_ls[elem + 29]
-                self.data.iat[j, 27] = loop_time_3
-
-                # loop time 3 behind
-                loop_time_3_behind = text_ls[elem + 30]
-                self.data.iat[j, 28] = loop_time_3_behind
-
-                # loop time 3 rank
-                loop_time_3_rank = text_ls[elem + 31].replace('=', "")
-                self.data.iat[j, 29] = int(loop_time_3_rank)
-
-                # loop time 4
-                loop_time_4 = text_ls[elem + 32]
-                self.data.iat[j, 30] = loop_time_4
-
-                # loop time 4 behind
-                loop_time_4_behind = text_ls[elem + 33]
-                self.data.iat[j, 31] = loop_time_4_behind
-
-                # loop time 4 rank
-                loop_time_4_rank = text_ls[elem + 34].replace('=', "")
-                self.data.iat[j, 32] = int(loop_time_4_rank)
-
-                # loop time 5
-                loop_time_5 = text_ls[elem + 35]
-                self.data.iat[j, 33] = loop_time_5
-
-                # loop time 5 behind
-                loop_time_5_behind = text_ls[elem + 36]
-                self.data.iat[j, 34] = loop_time_5_behind
-
-                # loop time 5 rank
-                loop_time_5_rank = text_ls[elem + 37].replace('=', "")
-                self.data.iat[j, 35] = int(loop_time_5_rank)
-
-                # shooting misses loop 1
-                shooting_misses_1 = text_ls[elem + 39]
-                self.data.iat[j, 36] = int(shooting_misses_1)
-
-                # shooting time 1
-                shooting_time_1 = text_ls[elem + 40]
-                self.data.iat[j, 37] = shooting_time_1
-
-                # shooting time loop 1 behind
-                shooting_time_loop_1_behind = text_ls[elem + 41]
-                self.data.iat[j, 38] = shooting_time_loop_1_behind
-
-                # shooting time loop 1 rank
-                shooting_time_loop_1_rank = text_ls[elem + 42].replace('=', "")
-                self.data.iat[j, 39] = int(shooting_time_loop_1_rank)
-
-                # shooting misses loop 2
-                shooting_misses_2 = text_ls[elem + 43]
-                self.data.iat[j, 40] = int(shooting_misses_2)
-
-                # shooting loop time 2
-                shooting_loop_time_2 = text_ls[elem + 44]
-                self.data.iat[j, 41] = shooting_loop_time_2
-
-                # shooting loop time 2 behind
-                shooting_loop_time_2_behind = text_ls[elem + 45]
-                self.data.iat[j, 42] = shooting_loop_time_2_behind
-
-                # shooting loop time 2 rank
-                shooting_loop_time_2_rank = text_ls[elem + 46].replace('=', "")
-                self.data.iat[j, 43] = int(shooting_loop_time_2_rank)
-
-                # shooting misses loop 3
-                shooting_misses_3 = text_ls[elem + 47]
-                self.data.iat[j, 44] = int(shooting_misses_3)
-
-                # shooting loop time 3
-                shooting_loop_time_3 = text_ls[elem + 48]
-                self.data.iat[j, 45] = shooting_loop_time_3
-
-                # shooting loop time 3 behind
-                shooting_loop_time_3_behind = text_ls[elem + 49]
-                self.data.iat[j, 46] = shooting_loop_time_3_behind
-
-                # shooting loop time 3 rank
-                shooting_loop_time_3_rank = text_ls[elem + 50].replace('=', "")
-                self.data.iat[j, 47] = int(shooting_loop_time_3_rank)
-
-                # shooting misses loop 4
-                shooting_misses_4 = text_ls[elem + 51]
-                self.data.iat[j, 48] = int(shooting_misses_4)
-
-                # shooting loop time 4
-                shooting_loop_time_4 = text_ls[elem + 52]
-                self.data.iat[j, 49] = shooting_loop_time_4
-
-                # shooting loop time 4 behind
-                shooting_loop_time_4_behind = text_ls[elem + 53]
-                self.data.iat[j, 50] = shooting_loop_time_4_behind
-
-                # shooting loop time 4 rank
-                shooting_loop_time_4_rank = text_ls[elem + 54].replace('=', "")
-                self.data.iat[j, 51] = int(shooting_loop_time_4_rank)
-
-                # shooting misses overall
-                shooting_misses_overall = text_ls[elem + 55]
-                self.data.iat[j, 52] = int(shooting_misses_overall)
-
-                # shooting time overall
-                shooting_time_overall = text_ls[elem + 56]
-                self.data.iat[j, 53] = shooting_time_overall
-
-                # shooting time overall behind
-                shooting_time_overall_behind = text_ls[elem + 57]
-                self.data.iat[j, 54] = shooting_time_overall_behind
-
-                # shooting time overall rank
-                shooting_time_overall_rank = text_ls[elem + 58].replace('=', "")
-                self.data.iat[j, 55] = int(shooting_time_overall_rank)
-
-                # range time loop 1
-                range_time_loop_1 = text_ls[elem + 60]
-                self.data.iat[j, 56] = range_time_loop_1
-
-                # range time loop 1 behind
-                range_time_loop_1_behind = text_ls[elem + 61]
-                self.data.iat[j, 57] = range_time_loop_1_behind
-
-                # range time loop 1 rank
-                range_time_loop_1_rank = text_ls[elem + 62].replace('=', "")
-                self.data.iat[j, 58] = int(range_time_loop_1_rank)
-
-                # range time loop 2
-                range_time_loop_2 = text_ls[elem + 63]
-                self.data.iat[j, 59] = range_time_loop_2
-
-                # range time loop 2 behind
-                range_time_loop_2_behind = text_ls[elem + 64]
-                self.data.iat[j, 60] = range_time_loop_2_behind
-
-                # range time loop 2 rank
-                range_time_loop_2_rank = text_ls[elem + 65].replace('=', "")
-                self.data.iat[j, 61] = int(range_time_loop_2_rank)
-
-                # range time loop 3
-                range_time_loop_3 = text_ls[elem + 66]
-                self.data.iat[j, 62] = range_time_loop_3
-
-                # range time loop 3 behind
-                range_time_loop_3_behind = text_ls[elem + 67]
-                self.data.iat[j, 63] = range_time_loop_3_behind
-
-                # range time loop 3 rank
-                range_time_loop_3_rank = text_ls[elem + 68].replace('=', "")
-                self.data.iat[j, 64] = int(range_time_loop_3_rank)
-
-                # range time loop 4
-                range_time_loop_4 = text_ls[elem + 69]
-                self.data.iat[j, 65] = range_time_loop_4
-
-                # range time loop 4 behind
-                range_time_loop_4_behind = text_ls[elem + 70]
-                self.data.iat[j, 66] = range_time_loop_4_behind
-
-                # range time loop 4 rank
-                range_time_loop_4_rank = text_ls[elem + 71].replace('=', "")
-                self.data.iat[j, 67] = int(range_time_loop_4_rank)
-
-                # range time overall
-                range_time_overall = text_ls[elem + 72]
-                self.data.iat[j, 68] = range_time_overall
-
-                # range time overall behind
-                range_time_overall_behind = text_ls[elem + 73]
-                self.data.iat[j, 69] = range_time_overall_behind
-
-                # range time overall rank
-                range_time_overall_rank = text_ls[elem + 74].replace('=', "")
-                self.data.iat[j, 70] = int(range_time_overall_rank)
-
-                # course time loop 1
-                course_time_loop_1 = text_ls[elem + 76]
-                self.data.iat[j, 71] = course_time_loop_1
-
-                # course time loop 1 behind
-                course_time_loop_1_behind = text_ls[elem + 77]
-                self.data.iat[j, 72] = course_time_loop_1_behind
-
-                # course time loop 1 rank
-                course_time_loop_1_rank = text_ls[elem + 78].replace('=', "")
-                self.data.iat[j, 73] = int(course_time_loop_1_rank)
-
-                # course time loop 2
-                course_time_loop_2 = text_ls[elem + 79]
-                self.data.iat[j, 74] = course_time_loop_2
-
-                # course time loop 2 behind
-                course_time_loop_2_behind = text_ls[elem + 80]
-                self.data.iat[j, 75] = course_time_loop_2_behind
-
-                # course time loop 2 rank
-                course_time_loop_2_rank = text_ls[elem + 81].replace('=', "")
-                self.data.iat[j, 76] = int(course_time_loop_2_rank)
-
-                # course time loop 3
-                course_time_loop_3 = text_ls[elem + 82]
-                self.data.iat[j, 77] = course_time_loop_3
-
-                # course time loop 3 behind
-                course_time_loop_3_behind = text_ls[elem + 83]
-                self.data.iat[j, 78] = course_time_loop_3_behind
-
-                # course time loop 3 rank
-                course_time_loop_3_rank = text_ls[elem + 84].replace('=', "")
-                self.data.iat[j, 79] = int(course_time_loop_3_rank)
-
-                # course time loop 4
-                course_time_loop_4 = text_ls[elem + 85]
-                self.data.iat[j, 80] = course_time_loop_4
-
-                # course time loop 4 behind
-                course_time_loop_4_behind = text_ls[elem + 86]
-                self.data.iat[j, 81] = course_time_loop_4_behind
-
-                # course time loop 4 rank
-                course_time_loop_4_rank = text_ls[elem + 87].replace('=', "")
-                self.data.iat[j, 82] = int(course_time_loop_4_rank)
-
-                # course time loop 5
-                course_time_loop_5 = text_ls[elem + 88]
-                self.data.iat[j, 83] = course_time_loop_5
-
-                # course time loop 5 behind
-                course_time_loop_5_behind = text_ls[elem + 89]
-                self.data.iat[j, 84] = course_time_loop_5_behind
-
-                # course time loop 5 rank
-                course_time_loop_5_rank = text_ls[elem + 90].replace('=', "")
-                self.data.iat[j, 85] = int(course_time_loop_5_rank)
-
-                # course time overall
-                course_time_overall = text_ls[elem + 91]
-                self.data.iat[j, 86] = course_time_overall
-
-                # course time overall behind
-                course_time_overall_behind = text_ls[elem + 92]
-                self.data.iat[j, 87] = course_time_overall_behind
-
-                # course time overall rank
-                course_time_overall_rank = text_ls[elem + 93].replace('=', "")
-                self.data.iat[j, 88] = int(course_time_overall_rank)
-
-                # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
-                # GESAMT PENALTY TIME = EINFACH ADDDIEREN
-                # penalty_loop_1
-                # penalty_loop_1 = text_ls[i + 94]
-                # !!!
-                # self.data.iat[j, 89] = penalty_loop_1
-
-                # penalty_loop_2
-                # penalty_loop_2 = text_ls[i + 95]
-                # !!!
-                # self.data.iat[j, 90] = penalty_loop_2
-
-                # penalty_loop_3
-                # penalty_loop_3 = text_ls[i + 96]
-                # !!!
-                # self.data.iat[j, 91] = penalty_loop_3
-
-                # penalty_loop_4
-                # penalty_loop_4 = text_ls[i + 97]
-                # !!!
-                # self.data.iat[j, 92] = penalty_loop_4
-
-                # penalty_overall
-                # penalty_loop_overall = text_ls[i + 98]
-                # !!!
-                # self.data.iat[j, 93] = penalty_loop_overall
-            except ValueError:
-                print('Please insert the data for {} manual.'.format(text_ls[elem]))
-                j += 1
-                continue
-            j += 1
-        self.data = self.data.dropna(axis=0, how='all', thresh=None, subset=None, inplace=False)
-
-    def individual_data(self, text_ls, index_list, minimum_limit):
-        """This method extracts specific race data from a biathlete of an INDIVIDUAL
-        race (e.g. interim times)"""
-
-        for k, index_athlete in enumerate(index_list):
-            if index_athlete >= minimum_limit:
-                in_evaluation = index_list[:k]
-                break
         j = 0
         for elem in in_evaluation:
             try:
@@ -1519,429 +1138,406 @@ class BiathlonData:
                         loop_time_5_rank = text_ls[elem + 37 - big_deficit_adjustment].replace('=', "")
                         self.data.iat[j, 35] = int(loop_time_5_rank)
 
-                counter = 0
-                for i in range(39, 54):
-                    if " " in text_ls[elem + i - big_deficit_adjustment]:
-                        counter += 1
-                big_deficit_adjustment += counter
+                # if individual race then check if there is a string with a whitespace in it
+                # if this is the case then increase big_deficit_adjustment
+                if isindividual:
+                    counter = 0
+                    for i in range(39, 54):
+                        if " " in text_ls[elem + i - big_deficit_adjustment]:
+                            counter += 1
+                    big_deficit_adjustment += counter
 
                 # shooting misses loop 1
-                shooting_misses_1 = text_ls[elem + 55 - big_deficit_adjustment]
+                shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 36] = int(shooting_misses_1)
 
                 # shooting time 1
-                shooting_time_1 = text_ls[elem + 56 - big_deficit_adjustment]
+                shooting_time_1 = text_ls[elem + 40 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 37] = shooting_time_1
 
                 # shooting 1
-                if " " in text_ls[elem + 57 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 41 - big_deficit_adjustment + add_indiv]:
                     shooting_time_loop_1_behind, shooting_time_loop_1_rank = \
-                        text_ls[elem + 57 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 41 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 38] = shooting_time_loop_1_behind
                     self.data.iat[j, 39] = int(shooting_time_loop_1_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # shooting time loop 1 behind
-                    shooting_time_loop_1_behind = text_ls[elem + 57 - big_deficit_adjustment]
+                    shooting_time_loop_1_behind = text_ls[elem + 41 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 38] = shooting_time_loop_1_behind
 
                     # shooting time loop 1 rank
-                    shooting_time_loop_1_rank = text_ls[elem + 58 - big_deficit_adjustment].replace('=', "")
+                    shooting_time_loop_1_rank = text_ls[elem + 42 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 39] = int(shooting_time_loop_1_rank)
 
                 # shooting misses loop 2
-                shooting_misses_2 = text_ls[elem + 59 - big_deficit_adjustment]
+                shooting_misses_2 = text_ls[elem + 43 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 40] = int(shooting_misses_2)
 
                 # shooting loop time 2
-                shooting_loop_time_2 = text_ls[elem + 60 - big_deficit_adjustment]
+                shooting_loop_time_2 = text_ls[elem + 44 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 41] = shooting_loop_time_2
 
                 # shooting 2
-                if " " in text_ls[elem + 61 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 45 - big_deficit_adjustment + add_indiv]:
                     shooting_time_loop_2_behind, shooting_time_loop_2_rank = \
-                        text_ls[elem + 61 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 45 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 42] = shooting_time_loop_2_behind
                     self.data.iat[j, 43] = int(shooting_time_loop_2_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # shooting loop time 2 behind
-                    shooting_loop_time_2_behind = text_ls[elem + 61 - big_deficit_adjustment]
+                    shooting_loop_time_2_behind = text_ls[elem + 45 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 42] = shooting_loop_time_2_behind
 
                     # shooting loop time 2 rank
-                    shooting_loop_time_2_rank = text_ls[elem + 62 - big_deficit_adjustment].replace('=', "")
+                    shooting_loop_time_2_rank = text_ls[elem + 46 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 43] = int(shooting_loop_time_2_rank)
 
                 # shooting misses loop 3
-                shooting_misses_3 = text_ls[elem + 63 - big_deficit_adjustment]
+                shooting_misses_3 = text_ls[elem + 47 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 44] = int(shooting_misses_3)
 
                 # shooting loop time 3
-                shooting_loop_time_3 = text_ls[elem + 64 - big_deficit_adjustment]
+                shooting_loop_time_3 = text_ls[elem + 48 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 45] = shooting_loop_time_3
 
                 # shooting 3
-                if " " in text_ls[elem + 65 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 49 - big_deficit_adjustment + add_indiv]:
                     shooting_time_loop_3_behind, shooting_time_loop_3_rank = \
-                        text_ls[elem + 65 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 49 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 46] = shooting_time_loop_3_behind
                     self.data.iat[j, 47] = int(shooting_time_loop_3_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # shooting loop time 3 behind
-                    shooting_loop_time_3_behind = text_ls[elem + 65 - big_deficit_adjustment]
+                    shooting_loop_time_3_behind = text_ls[elem + 49 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 46] = shooting_loop_time_3_behind
 
                     # shooting loop time 3 rank
-                    shooting_loop_time_3_rank = text_ls[elem + 66 - big_deficit_adjustment].replace('=', "")
+                    shooting_loop_time_3_rank = text_ls[elem + 50 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 47] = int(shooting_loop_time_3_rank)
 
                 # shooting misses loop 4
-                shooting_misses_4 = text_ls[elem + 67 - big_deficit_adjustment]
+                shooting_misses_4 = text_ls[elem + 51 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 48] = int(shooting_misses_4)
 
                 # shooting loop time 4
-                shooting_loop_time_4 = text_ls[elem + 68 - big_deficit_adjustment]
+                shooting_loop_time_4 = text_ls[elem + 52 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 49] = shooting_loop_time_4
 
                 # shooting 4
-                if " " in text_ls[elem + 69 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 53 - big_deficit_adjustment + add_indiv]:
                     shooting_time_loop_4_behind, shooting_time_loop_4_rank = \
-                        text_ls[elem + 69 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 53 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 50] = shooting_time_loop_4_behind
                     self.data.iat[j, 51] = int(shooting_time_loop_4_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # shooting loop time 4 behind
-                    shooting_loop_time_4_behind = text_ls[elem + 69 - big_deficit_adjustment]
+                    shooting_loop_time_4_behind = text_ls[elem + 53 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 50] = shooting_loop_time_4_behind
 
                     # shooting loop time 4 rank
-                    shooting_loop_time_4_rank = text_ls[elem + 70 - big_deficit_adjustment].replace('=', "")
+                    shooting_loop_time_4_rank = text_ls[elem + 54 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 51] = int(shooting_loop_time_4_rank)
 
                 # shooting misses overall
-                shooting_misses_overall = text_ls[elem + 71 - big_deficit_adjustment]
+                shooting_misses_overall = text_ls[elem + 55 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 52] = int(shooting_misses_overall)
 
                 # shooting time overall
-                shooting_time_overall = text_ls[elem + 72 - big_deficit_adjustment]
+                shooting_time_overall = text_ls[elem + 56 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 53] = shooting_time_overall
 
                 # shooting overall
-                if " " in text_ls[elem + 73 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 57 - big_deficit_adjustment + add_indiv]:
                     shooting_time_overall_behind, shooting_time_overall_rank = \
-                        text_ls[elem + 73 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 57 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 54] = shooting_time_overall_behind
                     self.data.iat[j, 55] = int(shooting_time_overall_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # shooting time overall behind
-                    shooting_time_overall_behind = text_ls[elem + 73 - big_deficit_adjustment]
+                    shooting_time_overall_behind = text_ls[elem + 57 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 54] = shooting_time_overall_behind
 
                     # shooting time overall rank
-                    shooting_time_overall_rank = text_ls[elem + 74 - big_deficit_adjustment].replace('=', "")
+                    shooting_time_overall_rank = text_ls[elem + 58 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 55] = int(shooting_time_overall_rank)
 
                 # range time loop 1
-                range_time_loop_1 = text_ls[elem + 76 - big_deficit_adjustment]
+                range_time_loop_1 = text_ls[elem + 60 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 56] = range_time_loop_1
 
                 # range loop 1
-                if " " in text_ls[elem + 77 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 61 - big_deficit_adjustment + add_indiv]:
                     range_time_loop_1_behind, range_time_loop_1_rank = \
-                        text_ls[elem + 77 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 61 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 57] = range_time_loop_1_behind
                     self.data.iat[j, 58] = int(range_time_loop_1_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # range time loop 1 behind
-                    range_time_loop_1_behind = text_ls[elem + 77 - big_deficit_adjustment]
+                    range_time_loop_1_behind = text_ls[elem + 61 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 57] = range_time_loop_1_behind
 
                     # range time loop 1 rank
-                    range_time_loop_1_rank = text_ls[elem + 78 - big_deficit_adjustment].replace('=', "")
+                    range_time_loop_1_rank = text_ls[elem + 62 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 58] = int(range_time_loop_1_rank)
 
                 # range time loop 2
-                range_time_loop_2 = text_ls[elem + 79 - big_deficit_adjustment]
+                range_time_loop_2 = text_ls[elem + 63 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 59] = range_time_loop_2
 
                 # range loop 2
-                if " " in text_ls[elem + 80 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 64 - big_deficit_adjustment + add_indiv]:
                     range_time_loop_2_behind, range_time_loop_2_rank = \
-                        text_ls[elem + 80 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 64 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 60] = range_time_loop_2_behind
                     self.data.iat[j, 61] = int(range_time_loop_2_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # range time loop 2 behind
-                    range_time_loop_2_behind = text_ls[elem + 80 - big_deficit_adjustment]
+                    range_time_loop_2_behind = text_ls[elem + 64 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 60] = range_time_loop_2_behind
 
                     # range time loop 2 rank
-                    range_time_loop_2_rank = text_ls[elem + 81 - big_deficit_adjustment].replace('=', "")
+                    range_time_loop_2_rank = text_ls[elem + 65 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 61] = int(range_time_loop_2_rank)
 
                 # range time loop 3
-                range_time_loop_3 = text_ls[elem + 82 - big_deficit_adjustment]
+                range_time_loop_3 = text_ls[elem + 66 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 62] = range_time_loop_3
 
                 # range loop 3
-                if " " in text_ls[elem + 83 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 67 - big_deficit_adjustment + add_indiv]:
                     range_time_loop_3_behind, range_time_loop_3_rank = \
-                        text_ls[elem + 77 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 67 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 63] = range_time_loop_3_behind
                     self.data.iat[j, 64] = int(range_time_loop_3_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # range time loop 3 behind
-                    range_time_loop_3_behind = text_ls[elem + 83 - big_deficit_adjustment]
+                    range_time_loop_3_behind = text_ls[elem + 67 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 63] = range_time_loop_3_behind
 
                     # range time loop 3 rank
-                    range_time_loop_3_rank = text_ls[elem + 84 - big_deficit_adjustment].replace('=', "")
+                    range_time_loop_3_rank = text_ls[elem + 68 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 64] = int(range_time_loop_3_rank)
 
                 # range time loop 4
-                range_time_loop_4 = text_ls[elem + 85 - big_deficit_adjustment]
+                range_time_loop_4 = text_ls[elem + 69 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 65] = range_time_loop_4
 
                 # range loop 4
-                if " " in text_ls[elem + 86 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 70 - big_deficit_adjustment + add_indiv]:
                     range_time_loop_4_behind, range_time_loop_4_rank = \
-                        text_ls[elem + 86 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 70 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 66] = range_time_loop_4_behind
                     self.data.iat[j, 67] = int(range_time_loop_4_rank.replace('=', ""))
                     big_deficit_adjustment += 1
                 else:
                     # range time loop 4 behind
-                    range_time_loop_4_behind = text_ls[elem + 86 - big_deficit_adjustment]
+                    range_time_loop_4_behind = text_ls[elem + 70 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 66] = range_time_loop_4_behind
 
                     # range time loop 4 rank
-                    range_time_loop_4_rank = text_ls[elem + 87 - big_deficit_adjustment].replace('=', "")
+                    range_time_loop_4_rank = text_ls[elem + 71 - big_deficit_adjustment + add_indiv].replace('=', "")
                     self.data.iat[j, 67] = int(range_time_loop_4_rank)
 
                 # range overall
-                if " " in text_ls[elem + 88 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 72 - big_deficit_adjustment + add_indiv]:
                     range_time_overall, range_time_overall_behind = \
-                        text_ls[elem + 88 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 72 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 68] = range_time_overall
                     self.data.iat[j, 69] = range_time_overall_behind
                     big_deficit_adjustment += 1
                 else:
                     # range time overall
-                    range_time_overall = text_ls[elem + 88 - big_deficit_adjustment]
+                    range_time_overall = text_ls[elem + 72 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 68] = range_time_overall
 
                     # range overall
-                    if " " in text_ls[elem + 89 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 73 - big_deficit_adjustment + add_indiv]:
                         range_time_overall_behind, range_time_overall_rank = \
-                            text_ls[elem + 89 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 73 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 69] = range_time_overall_behind
                         self.data.iat[j, 70] = int(range_time_overall_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # range time overall behind
-                        range_time_overall_behind = text_ls[elem + 89 - big_deficit_adjustment]
+                        range_time_overall_behind = text_ls[elem + 73 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 69] = range_time_overall_behind
 
                         # range time overall rank
-                        range_time_overall_rank = text_ls[elem + 90 - big_deficit_adjustment].replace('=', "")
+                        range_time_overall_rank = text_ls[elem + 74 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 70] = int(range_time_overall_rank)
 
                 # course loop 1
-                if " " in text_ls[elem + 92 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 76 - big_deficit_adjustment + add_indiv]:
                     course_time_loop_1, course_time_loop_1_behind = \
-                        text_ls[elem + 92 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 76 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 71] = course_time_loop_1
                     self.data.iat[j, 72] = course_time_loop_1_behind
                     big_deficit_adjustment += 1
                 else:
                     # course time loop 1
-                    course_time_loop_1 = text_ls[elem + 92 - big_deficit_adjustment]
+                    course_time_loop_1 = text_ls[elem + 76 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 71] = course_time_loop_1
 
-                    if " " in text_ls[elem + 93 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 77 - big_deficit_adjustment + add_indiv]:
                         course_time_loop_1_behind, course_time_loop_1_rank = \
-                            text_ls[elem + 93 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 77 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 72] = course_time_loop_1_behind
                         self.data.iat[j, 73] = int(course_time_loop_1_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # course time loop 1 behind
-                        course_time_loop_1_behind = text_ls[elem + 93 - big_deficit_adjustment]
+                        course_time_loop_1_behind = text_ls[elem + 77 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 72] = course_time_loop_1_behind
 
                         # course time loop 1 rank
-                        course_time_loop_1_rank = text_ls[elem + 94 - big_deficit_adjustment].replace('=', "")
+                        course_time_loop_1_rank = text_ls[elem + 78 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 73] = int(course_time_loop_1_rank)
 
                 # course loop 2
-                if " " in text_ls[elem + 95 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 79 - big_deficit_adjustment + add_indiv]:
                     course_time_loop_2, course_time_loop_2_behind = \
-                        text_ls[elem + 95 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 79 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 74] = course_time_loop_2
                     self.data.iat[j, 75] = course_time_loop_2_behind
                     big_deficit_adjustment += 1
                 else:
                     # course time loop 2
-                    course_time_loop_2 = text_ls[elem + 95 - big_deficit_adjustment]
+                    course_time_loop_2 = text_ls[elem + 79 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 74] = course_time_loop_2
 
-                    if " " in text_ls[elem + 96 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 80 - big_deficit_adjustment + add_indiv]:
                         course_time_loop_2_behind, course_time_loop_2_rank = \
-                            text_ls[elem + 96 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 80 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 75] = course_time_loop_2_behind
                         self.data.iat[j, 76] = int(course_time_loop_2_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # course time loop 2 behind
-                        course_time_loop_2_behind = text_ls[elem + 96 - big_deficit_adjustment]
+                        course_time_loop_2_behind = text_ls[elem + 80 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 75] = course_time_loop_2_behind
 
                         # course time loop 2 rank
-                        course_time_loop_2_rank = text_ls[elem + 97 - big_deficit_adjustment].replace('=', "")
+                        course_time_loop_2_rank = text_ls[elem + 81 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 76] = int(course_time_loop_2_rank)
 
                 # course loop 3
-                if " " in text_ls[elem + 98 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 82 - big_deficit_adjustment + add_indiv]:
                     course_time_loop_3, course_time_loop_3_behind = \
-                        text_ls[elem + 98 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 82 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 77] = course_time_loop_3
                     self.data.iat[j, 78] = course_time_loop_3_behind
                     big_deficit_adjustment += 1
                 else:
                     # course time loop 3
-                    course_time_loop_3 = text_ls[elem + 98 - big_deficit_adjustment]
+                    course_time_loop_3 = text_ls[elem + 82 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 77] = course_time_loop_3
 
-                    if " " in text_ls[elem + 99 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 83 - big_deficit_adjustment + add_indiv]:
                         course_time_loop_3_behind, course_time_loop_3_rank = \
-                            text_ls[elem + 99 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 83 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 78] = course_time_loop_3_behind
                         self.data.iat[j, 79] = int(course_time_loop_3_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # course time loop 3 behind
-                        course_time_loop_3_behind = text_ls[elem + 99 - big_deficit_adjustment]
+                        course_time_loop_3_behind = text_ls[elem + 83 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 78] = course_time_loop_3_behind
 
                         # course time loop 3 rank
-                        course_time_loop_3_rank = text_ls[elem + 100 - big_deficit_adjustment].replace('=', "")
+                        course_time_loop_3_rank = text_ls[elem + 84 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 79] = int(course_time_loop_3_rank)
 
                 # course loop 4
-                if " " in text_ls[elem + 101 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 85 - big_deficit_adjustment + add_indiv]:
                     course_time_loop_4, course_time_loop_4_behind = \
-                        text_ls[elem + 101 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 85 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 80] = course_time_loop_4
                     self.data.iat[j, 81] = course_time_loop_4_behind
                     big_deficit_adjustment += 1
                 else:
                     # course time loop 4
-                    course_time_loop_4 = text_ls[elem + 101 - big_deficit_adjustment]
+                    course_time_loop_4 = text_ls[elem + 85 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 80] = course_time_loop_4
 
-                    if " " in text_ls[elem + 102 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 86 - big_deficit_adjustment + add_indiv]:
                         course_time_loop_4_behind, course_time_loop_4_rank = \
-                            text_ls[elem + 102 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 86 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 81] = course_time_loop_4_behind
                         self.data.iat[j, 82] = int(course_time_loop_4_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # course time loop 4 behind
-                        course_time_loop_4_behind = text_ls[elem + 102 - big_deficit_adjustment]
+                        course_time_loop_4_behind = text_ls[elem + 86 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 81] = course_time_loop_4_behind
 
                         # course time loop 4 rank
-                        course_time_loop_4_rank = text_ls[elem + 103 - big_deficit_adjustment].replace('=', "")
+                        course_time_loop_4_rank = text_ls[elem + 87 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 82] = int(course_time_loop_4_rank)
 
                 # course loop 5
-                if " " in text_ls[elem + 104 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 88 - big_deficit_adjustment + add_indiv]:
                     course_time_loop_5, course_time_loop_5_behind = \
-                        text_ls[elem + 104 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 88 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 83] = course_time_loop_5
                     self.data.iat[j, 84] = course_time_loop_5_behind
                     big_deficit_adjustment += 1
                 else:
                     # course time loop 5
-                    course_time_loop_5 = text_ls[elem + 104 - big_deficit_adjustment]
+                    course_time_loop_5 = text_ls[elem + 88 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 83] = course_time_loop_5
 
-                    if " " in text_ls[elem + 105 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 89 - big_deficit_adjustment + add_indiv]:
                         course_time_loop_5_behind, course_time_loop_5_rank = \
-                            text_ls[elem + 105 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 89 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 84] = course_time_loop_5_behind
                         self.data.iat[j, 85] = int(course_time_loop_5_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # course time loop 5 behind
-                        course_time_loop_5_behind = text_ls[elem + 105 - big_deficit_adjustment]
+                        course_time_loop_5_behind = text_ls[elem + 89 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 84] = course_time_loop_5_behind
 
                         # course time loop 5 rank
-                        course_time_loop_5_rank = text_ls[elem + 106 - big_deficit_adjustment].replace('=', "")
+                        course_time_loop_5_rank = text_ls[elem + 90 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 85] = int(course_time_loop_5_rank)
 
-                if " " in text_ls[elem + 107 - big_deficit_adjustment]:
+                if " " in text_ls[elem + 91 - big_deficit_adjustment + add_indiv]:
                     course_time_overall, course_time_overall_behind = \
-                        text_ls[elem + 107 - big_deficit_adjustment].split(" ")
+                        text_ls[elem + 91 - big_deficit_adjustment + add_indiv].split(" ")
                     self.data.iat[j, 86] = course_time_overall
                     self.data.iat[j, 87] = course_time_overall_behind
                     big_deficit_adjustment += 1
                 else:
                     # course time overall
-                    course_time_overall = text_ls[elem + 107 - big_deficit_adjustment]
+                    course_time_overall = text_ls[elem + 91 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 86] = course_time_overall
 
-                    if " " in text_ls[elem + 108 - big_deficit_adjustment]:
+                    if " " in text_ls[elem + 92 - big_deficit_adjustment + add_indiv]:
                         course_time_overall_behind, course_time_overall_rank = \
-                            text_ls[elem + 108 - big_deficit_adjustment].split(" ")
+                            text_ls[elem + 92 - big_deficit_adjustment + add_indiv].split(" ")
                         self.data.iat[j, 87] = course_time_overall_behind
                         self.data.iat[j, 88] = int(course_time_overall_rank.replace('=', ""))
                         big_deficit_adjustment += 1
                     else:
                         # course time overall behind
-                        course_time_overall_behind = text_ls[elem + 108 - big_deficit_adjustment]
+                        course_time_overall_behind = text_ls[elem + 92 - big_deficit_adjustment + add_indiv]
                         self.data.iat[j, 87] = course_time_overall_behind
 
                         # course time overall rank
-                        course_time_overall_rank = text_ls[elem + 109 - big_deficit_adjustment].replace('=', "")
+                        course_time_overall_rank = text_ls[elem + 93 - big_deficit_adjustment + add_indiv].replace('=', "")
                         self.data.iat[j, 88] = int(course_time_overall_rank)
 
-                # PENALTY TIME = LOOP TIME - RANGE TIME - COURSE TIME
-                # GESAMT PENALTY TIME = EINFACH ADDDIEREN
-                # penalty_loop_1
-                # penalty_loop_1 = text_ls[i + 94]
-                # !!!
-                # self.data.iat[j, 89] = penalty_loop_1
-
-                # penalty_loop_2
-                # penalty_loop_2 = text_ls[i + 95]
-                # !!!
-                # self.data.iat[j, 90] = penalty_loop_2
-
-                # penalty_loop_3
-                # penalty_loop_3 = text_ls[i + 96]
-                # !!!
-                # self.data.iat[j, 91] = penalty_loop_3
-
-                # penalty_loop_4
-                # penalty_loop_4 = text_ls[i + 97]
-                # !!!
-                # self.data.iat[j, 92] = penalty_loop_4
-
-                # penalty_overall
-                # penalty_loop_overall = text_ls[i + 98]
-                # !!!
-                # self.data.iat[j, 93] = penalty_loop_overall
             except ValueError:
-                print('Data error => Please insert the data for {} manual.'.format(text_ls[elem]))
+                print('Please insert the data for {} manual.'.format(text_ls[elem]))
                 j += 1
                 continue
             j += 1
@@ -1954,8 +1550,9 @@ class BiathlonData:
         for i in pages:
             text = text + i.getText('text')
         text_ls = text.split("\n")  # array of the lines of the string
-        # print(text_ls)
+
         # update the athlete table in the database
+        # index_list exist off integers which point to a name of an athlete in text_ls
         index_list = ba.update_athlete_db(text_ls)
 
         # get the minimum limit, on which we try to stop reading data for the dataframe
@@ -2019,17 +1616,6 @@ class BiathlonData:
         self.data = pd.DataFrame(np.nan, index=list(range(number_of_biathletes)),
                                  columns=columns_list, dtype=object)
 
-        # print(self.data.index)
-        # print(self.data.loc[0, ['Name']])  # selecting by label
-        # print(self.data.iloc[3])    # selecting by position
-        # print(self.data.iloc[3:5, 0:2])  # slicing
-        # print(self.data.iloc[[1, 2, 4], [0, 2]])  # specific positions
-        # print(self.data.iloc[1, 1])  # getting a value explicitly
-        # print(self.data[self.data['Name'] > 0])  # boolean indexing
-        # print(self.data[self.data > 0])
-        # print(self.data[self.data['Name'].isin(['two', 'NaN'])])
-        # print(self.data[self.data['Name'].isna()])
-
         if self.metadata['description'] == 'COMPETITION ANALYSIS':
             # if no race_type could be extracted stop this method get_data()
             if self.metadata['race_type'] is None:
@@ -2037,13 +1623,13 @@ class BiathlonData:
             elif self.metadata['race_type'] == 'SPRINT':
                 self.sprint_data(text_ls, index_list, minimum_limit)
             elif self.metadata['race_type'] == 'PURSUIT':  # massenstart sollte gleich sein
-                self.pursuit_data(text_ls, index_list, minimum_limit)
+                self.single_races(text_ls, index_list, minimum_limit, False)
             elif self.metadata['race_type'] == 'RELAY':
                 pass
             elif self.metadata['race_type'] == 'INDIVIDUAL':
-                self.individual_data(text_ls, index_list, minimum_limit)
+                self.single_races(text_ls, index_list, minimum_limit, True)
             elif self.metadata['race_type'] == 'MASS START':
-                self.pursuit_data(text_ls, index_list, minimum_limit)
+                self.single_races(text_ls, index_list, minimum_limit, False)
             elif self.metadata['race_type'] == 'MIXED':
                 pass
 
@@ -2062,14 +1648,42 @@ class BiathlonData:
             self.data[column] = self.data[column].astype(types[h])
 
     def get_start_list(self):
-        self.start_list = 0
+
+        # index_list exist off integers which point to a name of an athlete in text_ls
         all_pages = cv.divide_into_pages(self.pdf_doc)
         all_text = ""
         for p in all_pages:
             all_text = all_text + p.getText('text')
-        all_text_ls = all_text.split("\n")
-        print(all_text_ls)
-        self.start_list = all_text_ls
+        text_ls = all_text.split("\n")
+        index_list = ba.update_athlete_db(text_ls)
+        print(text_ls)
+        # if year is 2016 or bigger there is an adjustment
+        adjustment = 0
+        if self.metadata['date'].year < 2016 or \
+                (self.metadata['date'].year == 2016 and self.metadata['date'].month >= 6):
+            adjustment = 1
+        j = 0
+        start_list = []
+        if self.metadata['race_type'] is None:
+            return
+        elif self.metadata['race_type'] == 'SPRINT':
+            for index_athlete in index_list:
+                start_list.append((text_ls[index_athlete], text_ls[index_athlete + adjustment + 2]))
+        elif self.metadata['race_type'] == 'PURSUIT':
+            for index_athlete in index_list:
+                start_list.append((text_ls[index_athlete].replace("-", " "), text_ls[index_athlete + 2]))
+        elif self.metadata['race_type'] == 'RELAY':
+            pass
+        elif self.metadata['race_type'] == 'INDIVIDUAL':
+            for index_athlete in index_list:
+                start_list.append((text_ls[index_athlete].replace("-", " "), text_ls[index_athlete + adjustment + 2]))
+        elif self.metadata['race_type'] == 'MASS START':
+            for index_athlete in index_list:
+                start_list.append((text_ls[index_athlete].replace("-", " "), text_ls[index_athlete + adjustment + 2]))
+        elif self.metadata['race_type'] == 'MIXED':
+            pass
+        self.start_list = start_list
+
 
 
 if __name__ == "__main__":
@@ -2079,7 +1693,7 @@ if __name__ == "__main__":
 
     organisation = 'WORLD CUP'
     # pdf_doc_1 = fitz.Document("../Tests/BT_C51A_1.0(1).pdf")
-    pdf_doc_2_1 = fitz.Document(r"C:\Users\Michael\Documents\python_projects\biathlon\Tests\BT_C77D_1.0(5).pdf")
+    pdf_doc_2_1 = fitz.Document(r"/DataProcessing/BT_C77D_1.0(5).pdf")
     pdf_doc_3 = fitz.Document("../Tests/BT_C82_1.0(1).pdf")
     # pdf_doc_4 = fitz.Document("../Tests/BT_O77B_1.0.pdf")
     pdf_doc_5 = fitz.Document("../Tests/BT_O77B_1.0(1).pdf")

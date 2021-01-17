@@ -62,6 +62,7 @@ def create_json_and_db():
                     disqualified INTEGER,
                     disqualified_for_unsportsmanlike_behaviour INTEGER,
                     ranked INTEGER,
+                    race_start VARCHAR(30),
                     PRIMARY KEY(place, year, type, age, gender)
                     );"""
         cursor.execute(race_sql)
@@ -268,6 +269,7 @@ def create_json_and_db():
                         penalty_time_loop_three VARCHAR(20), 
                         penalty_time_loop_four VARCHAR(20), 
                         penalty_time_overall VARCHAR(20), 
+                        race_start VARCHAR(30),
                         race_id INTEGER NOT NULL, 
                         athlete_id INTEGER NOT NULL,
                         FOREIGN KEY (race_id)
@@ -558,7 +560,8 @@ def metadata_to_database(biathlon_obj):
     course_row = cursor.fetchall()
 
     get_race_row_query = "SELECT race_len_km, number_of_entries, did_not_start, did_not_finish, lapped, disqualified, " \
-                         "disqualified_for_unsportsmanlike_behaviour, ranked FROM RACE WHERE ROWID = ?; "
+                         "disqualified_for_unsportsmanlike_behaviour, ranked, race_start" \
+                         " FROM RACE WHERE ROWID = ?; "
     cursor.execute(get_race_row_query, (race_id,))
     race_row = cursor.fetchall()
     get_weather_row_query = "SELECT thirty_min_before_start, at_start_time, thirty_min_after_start," \
@@ -613,7 +616,8 @@ def metadata_to_database(biathlon_obj):
                       biathlon_obj.metadata['did_not_finish'], biathlon_obj.metadata['lapped'],
                       biathlon_obj.metadata['disqualified'],
                       biathlon_obj.metadata['disqualified_for_unsportsmanlike_behaviour'],
-                      biathlon_obj.metadata['ranked'], biathlon_obj.metadata['weather'],
+                      biathlon_obj.metadata['ranked'], biathlon_obj.metadata['race_start'],
+                      biathlon_obj.metadata['weather'],
                       biathlon_obj.metadata['snow_condition'],
                       biathlon_obj.metadata['snow_temperature'], biathlon_obj.metadata['air_temperature'],
                       biathlon_obj.metadata['humidity'], biathlon_obj.metadata['wind_direction'],
@@ -662,60 +666,65 @@ def metadata_to_database(biathlon_obj):
                 cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
             elif index == 8:
+                update_query = "UPDATE RACE SET race_start = ? WHERE rowid = ?;"
+                cursor.execute(update_query, (i[0], race_id))
+                conn.commit()
+            elif index == 9:
                 update_query = "UPDATE WEATHER SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 9:
+            elif index == 10:
                 update_query = "UPDATE SNOW_CONDITION SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 10:
+            elif index == 11:
                 update_query = "UPDATE SNOW_TEMPERATURE SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 11:
+            elif index == 12:
                 update_query = "UPDATE AIR_TEMPERATURE SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 12:
+            elif index == 13:
                 update_query = "UPDATE HUMIDITY SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 13:
+            elif index == 14:
                 update_query = "UPDATE WIND_DIRECTION SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 14:
+            elif index == 15:
                 update_query = "UPDATE WIND_SPEED SET thirty_min_before_start = ?, at_start_time = ?, " \
                               "thirty_min_after_start = ?, at_end_time = ? WHERE rowid = ?; "
                 cursor.execute(update_query, (i[0][0], i[0][1], i[0][2], i[0][3], race_id))
                 conn.commit()
-            elif index == 15:
+            elif index == 16:
                 update_query = "UPDATE COURSE SET total_course_length = ? WHERE rowid = ?;"
                 cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
-            elif index == 16:
+            elif index == 17:
                 update_query = "UPDATE COURSE SET height_difference = ? WHERE rowid = ?;"
                 cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
-            elif index == 17:
+            elif index == 18:
                 update_query = "UPDATE COURSE SET max_climb = ? WHERE rowid = ?;"
                 cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
-            elif index == 18:
+            elif index == 19:
                 update_query = "UPDATE COURSE SET total_climb = ? WHERE rowid = ?;"
                 cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
-            elif index == 19:
+            elif index == 20:
                 update_query = "UPDATE COURSE SET level_difficulty = ? WHERE rowid = ?;"
                 cursor.execute(update_query, (i[0], race_id))
                 conn.commit()
+
         else:
             if i[0] != i[1]:
                 raise Exception('Difference between database and a BiathlonData object'
@@ -1237,3 +1246,22 @@ def race_data_to_database(biathlon_obj):
                 conn.commit()
     conn.close()
 
+
+def start_list_to_database(biathlon_obj):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        race_id = create_race(biathlon_obj)
+        for starter in biathlon_obj.start_list:
+            get_athlete_id_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
+            cursor.execute(get_athlete_id_query, (starter[0],))
+            athlete_id = int(cursor.fetchall()[0][0])
+            if not athlete_id:
+                raise Exception("This should not happen. Please make sure every athlete that finished in this"
+                                "race already has his tuple in the table ATHLETE.")
+            insert_race_start_query = "UPDATE RACE_DATA SET race_start = ? " \
+                                 "WHERE athlete_id = ? AND race_id = ?;"
+            cursor.execute(insert_race_start_query, (starter[1].replace(" ", ""), athlete_id, race_id))
+            conn.commit()
+    except sqlite3.Error:
+        print("Failed connection to the database")

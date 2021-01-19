@@ -51,6 +51,7 @@ def create_json_and_db():
                     CREATE TABLE IF NOT EXISTS RACE (
                     place VARCHAR(20) NOT NULL,
                     year VARCHAR(20) NOT NULL,
+                    month VARCHAR(20) NOT NULL,
                     type VARCHAR(20) NOT NULL,
                     age VARCHAR(20) NOT NULL,
                     gender VARCHAR(20) NOT NULL,
@@ -63,7 +64,7 @@ def create_json_and_db():
                     disqualified_for_unsportsmanlike_behaviour INTEGER,
                     ranked INTEGER,
                     race_start VARCHAR(30),
-                    PRIMARY KEY(place, year, type, age, gender)
+                    PRIMARY KEY(place, year, month, type, age, gender)
                     );"""
         cursor.execute(race_sql)
         connection.commit()
@@ -496,17 +497,18 @@ def create_race(biathlon_obj):
     # tests if race already exists
     place = biathlon_obj.metadata['place']
     year = biathlon_obj.metadata['date'].year
+    month = biathlon_obj.metadata['date'].month
     race_type = biathlon_obj.metadata['race_type']
     age_group = biathlon_obj.metadata['age_group']
     gender = biathlon_obj.metadata['gender']
-    race_characteristics = (place, year, race_type, age_group, gender)
+    race_characteristics = (place, year, month, race_type, age_group, gender)
     if None in race_characteristics:
         raise Exception('This should not happen. Please look into database_connection.create_race()')
 
     conn = get_connection()
     cursor = conn.cursor()
-    get_rowid_query = "SELECT ROWID FROM RACE WHERE place = ? AND year = ? AND type = ? AND age = ? AND" \
-                      " gender = ?;"
+    get_rowid_query = "SELECT ROWID FROM RACE WHERE place = ? AND year = ? AND month = ?" \
+                      " AND type = ? AND age = ? AND gender = ?;"
     cursor.execute(get_rowid_query, race_characteristics)
     row_id = cursor.fetchall()
     if len(row_id) > 1:
@@ -515,8 +517,8 @@ def create_race(biathlon_obj):
     if row_id:
         race_id = row_id[0][0]  # row_id has following format: ((int,))
     else:  # no row with the race characteristics exists -> one is created
-        new_row_query = "INSERT INTO RACE (place, year, type, age, gender) " \
-                        "VALUES(?, ?, ?, ?, ?);"
+        new_row_query = "INSERT INTO RACE (place, year, month, type, age, gender) " \
+                        "VALUES(?, ?, ?, ?, ?, ?);"
         cursor.execute(new_row_query, race_characteristics)
         conn.commit()
         cursor.execute(get_rowid_query, race_characteristics)
@@ -753,7 +755,7 @@ def race_data_to_database(biathlon_obj):
         get_athlete_id_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
         cursor.execute(get_athlete_id_query, (name,))
         athlete_id = int(cursor.fetchall()[0][0])
-        print('athlete with athlete_id is going to be read to the database: ', athlete_id)
+        print('athlete {} with athlete_id {} is going to be read to the database:'.format(name, athlete_id))
         if not athlete_id:
             raise Exception("This should not happen. Please make sure every athlete that finished in this"
                             "race already has his tuple in the table ATHLETE.")
@@ -1254,7 +1256,7 @@ def start_list_to_database(biathlon_obj):
         race_id = create_race(biathlon_obj)
         for starter in biathlon_obj.start_list:
             get_athlete_id_query = "SELECT ROWID FROM ATHLETE WHERE name = ?;"
-            cursor.execute(get_athlete_id_query, (starter[0],))
+            cursor.execute(get_athlete_id_query, (starter[0].replace("-", " "),))
             athlete_id = int(cursor.fetchall()[0][0])
             if not athlete_id:
                 raise Exception("This should not happen. Please make sure every athlete that finished in this"

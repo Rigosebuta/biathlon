@@ -58,7 +58,7 @@ def main():
     # biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', "WORLD CUP")
     #biathlon_ls = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', 'WORLD CUP')
 
-    biathlon_ls = transform_data(r"C:\Users\Michael\Documents\python_projects\biathlon\DataProcessing", 'WORLD CUP')
+    biathlon_ls = transform_data(r"C:\Users\Michael\Documents\python_projects\biathlon3\Input", 'WORLD CUP')
     for doc in biathlon_ls:
         print(doc.metadata)
         dc.metadata_to_database(doc)
@@ -66,6 +66,7 @@ def main():
             print(doc.data.to_string())
             dc.race_data_to_database(doc)
         if doc.start_list is not None:
+            print(doc.start_list)
             dc.start_list_to_database(doc)
 
     # world_cup_2006_2007 = transform_data(r"C:\Users\Michael\Downloads")

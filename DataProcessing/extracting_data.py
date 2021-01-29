@@ -101,6 +101,7 @@ class BiathlonData:
         # get first page of a pdf doc => first page is enough to find out some of the metadata
         page_zero = self.pdf_doc.loadPage(0)
         text_zero = page_zero.getText('text')
+        text_zero_ls = text_zero.split("\n")
 
         # get all lines of the pdf as a string list
         all_pages = cv.divide_into_pages(self.pdf_doc)
@@ -116,7 +117,7 @@ class BiathlonData:
 
         # search for place
         # first page is enough to find out the place
-        self.get_place(text_zero)
+        self.get_place(text_zero_ls)
 
         # search for country of place
         # to work properly place has to be determined before this
@@ -242,8 +243,8 @@ class BiathlonData:
 
         # search for place in text
         for pl in place_d:
-            match = re.search(pl, text_zero)
-            if match:
+
+            if pl in text_zero:
                 pl = pl.upper()
 
                 # rewrite the location, some places may have several names in use
@@ -962,16 +963,13 @@ class BiathlonData:
         elif self.metadata['race_type'] == 'PURSUIT':
             for index_athlete in index_list:
                 start_list.append((text_ls[index_athlete].replace("-", " "), text_ls[index_athlete + 2]))
-        elif self.metadata['race_type'] == 'RELAY':
-            pass
         elif self.metadata['race_type'] == 'INDIVIDUAL':
             for index_athlete in index_list:
                 start_list.append((text_ls[index_athlete].replace("-", " "), text_ls[index_athlete + adjustment + 2]))
-        elif self.metadata['race_type'] == 'MASS START':
+        elif self.metadata['race_type'] in ['RELAY', 'MASS START', 'MIXED']:
             for index_athlete in index_list:
-                start_list.append((text_ls[index_athlete].replace("-", " "), text_ls[index_athlete + adjustment + 2]))
-        elif self.metadata['race_type'] == 'MIXED':
-            pass
+                start_list.append((text_ls[index_athlete].replace("-", " "), self.metadata['race_start']))
+
         self.start_list = start_list
 
 

@@ -94,6 +94,8 @@ class BiathlonData:
         self.start_list = None
         if self.metadata['description'] == "START LIST":
             self.get_start_list()
+        elif self.metadata['race_type'] == 'MASS START':
+            self.get_start_list()
 
     def get_metadata(self):
         """This method extracts metadata from the document."""
@@ -256,7 +258,7 @@ class BiathlonData:
                     pl = 'AL'
                 elif pl == 'KIRY BIATHLON STADIUM' or pl == 'KOSCIELISKO':
                     pl = 'ZAKOPANE-KOSCIELISKO'
-                elif pl == 'BREZNO_OSRBLIE':
+                elif pl == 'BREZNO-OSRBLIE':
                     pl = 'OSRBLIE'
                 elif pl == 'BIATHLON STADION AM GRENZADLER':
                     pl = 'OBERHOF'
@@ -566,8 +568,9 @@ class BiathlonData:
         for k, index_athlete in enumerate(index_list):
             if index_athlete >= minimum_limit:
                 in_evaluation = index_list[:k]
-                out_of_evaluation = index_list[k:]
                 break
+        else:
+            in_evaluation = index_list
 
         j = 0
         for elem in in_evaluation:
@@ -691,10 +694,12 @@ class BiathlonData:
             if index_athlete >= minimum_limit:
                 in_evaluation = index_list[:k]
                 break
+        else:
+            in_evaluation = index_list
+
         add_indiv = 0
         if isindividual:
             add_indiv = 16
-
         j = 0
         for elem in in_evaluation:
             try:
@@ -843,7 +848,6 @@ class BiathlonData:
         for i in pages:
             text = text + i.getText('text')
         text_ls = text.split("\n")  # array of the lines of the string
-        print(text_ls)
         # update the athlete table in the database
         # index_list exist off integers which point to a name of an athlete in text_ls
         index_list = ba.update_athlete_db(text_ls)
@@ -870,7 +874,6 @@ class BiathlonData:
                 if disqualified_pos == len(text_ls):
                     disqualified_pos = pos
         minimum_limit = min([did_not_finish_pos, did_not_start_pos, lapped_pos, jury_dec_pos, disqualified_pos])
-
         number_of_biathletes = 200
 
         columns_list = ['Name', 'Country', 'Total_Misses', 'Overall_Time', 'Overall_Time_Behind',

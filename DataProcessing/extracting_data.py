@@ -851,7 +851,7 @@ class BiathlonData:
         # update the athlete table in the database
         # index_list exist off integers which point to a name of an athlete in text_ls
         index_list = ba.update_athlete_db(text_ls)
-
+        print(text_ls)
         # get the minimum limit, on which we try to stop reading data for the dataframe
         # if we would try to read after one of these words occur in the list we would get in danger to
         # provoke an IndexError because e.g. disqualified athletes might not have done a second lap

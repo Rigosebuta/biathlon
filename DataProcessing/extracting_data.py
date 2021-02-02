@@ -675,6 +675,12 @@ class BiathlonData:
             self.data.iat[j, column + 2] = int(text_ls[position + 1].replace('=', ""))
             return 1
         elif text_ls[position].count(" ") == 0:
+            if text_ls[position].find('+') != -1 and text_ls[position].find('+') != 0:
+                overall, behind = text_ls[position].split("+")
+                self.data.iat[j, column] = overall
+                self.data.iat[j, column + 1] = '+' + behind
+                self.data.iat[j, column + 2] = text_ls[position + 1]
+                return 1
             self.data.iat[j, column] = text_ls[position]
             if text_ls[position + 1].count(" ") == 1:
                 behind, rank = text_ls[position + 1].split(" ")
@@ -712,8 +718,8 @@ class BiathlonData:
                 self.data.iat[j, 1] = country
 
                 # total misses
-                total_misses = text_ls[elem + 2]
-                self.data.iat[j, 2] = int(total_misses)
+                # total_misses = text_ls[elem + 2]
+                # self.data.iat[j, 2] = int(total_misses)
 
                 # Only in individual races its probable that someone is more than 10 minutes
                 # behind the winner. If this happens data cannot be read due to a different structure
@@ -722,7 +728,37 @@ class BiathlonData:
                 big_deficit_adjustment = 0
 
                 # overall time
-                big_deficit_adjustment += self.data_splitting(j, elem + 3 - big_deficit_adjustment, 3, text_ls)
+                if text_ls[elem + 2].count(" ") == 2:
+                    rank, overall, behind = text_ls[elem + 2].split(" ")
+                    self.data.iat[j, 2] = int(rank.replace("=", ""))
+                    self.data.iat[j, 3] = overall
+                    self.data.iat[j, 4] = behind
+                    big_deficit_adjustment += 2
+                elif text_ls[elem + 2].count(" ") == 1:
+                    rank, overall = text_ls[elem + 2].split(" ")
+                    self.data.iat[j, 2] = int(rank.replace("=", ""))
+                    self.data.iat[j, 3] = overall
+                    self.data.iat[j, 4] = text_ls[elem + 3]
+                    big_deficit_adjustment += 1
+                elif text_ls[elem + 2].count(" ") == 0:
+                    self.data.iat[j, 2] = int(text_ls[elem + 2].replace("=", ""))
+                    if text_ls[elem + 3].count(" ") == 1:
+                        overall, behind = text_ls[elem + 3].split(" ")
+                        self.data.iat[j, 3] = overall
+                        self.data.iat[j, 4] = behind
+                        big_deficit_adjustment += 1
+                    elif (text_ls[elem + 3].count(" ") == 1 and text_ls[elem + 3].find('+') != -1 and
+                          text_ls[elem + 3].find('+') != 0):
+                        overall, behind = text_ls[elem + 3].split("+")
+                        self.data.iat[j, 3] = overall
+                        self.data.iat[j, 4] = '+' + behind
+                        big_deficit_adjustment += 1
+                    else:
+                        self.data.iat[j, 3] = text_ls[elem + 3]
+                        self.data.iat[j, 4] = text_ls[elem + 4]
+
+                total_rank = text_ls[elem + 5 - big_deficit_adjustment]
+                self.data.iat[j, 5] = int(total_rank)
 
                 # cumulative time loop 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 7 - big_deficit_adjustment, 6, text_ls)
@@ -765,6 +801,9 @@ class BiathlonData:
                     big_deficit_adjustment += counter
 
                 # shooting misses loop 1
+                shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
+                if shooting_misses_1 == 'Shooting':
+                    big_deficit_adjustment -= 1
                 shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 36] = int(shooting_misses_1)
 
@@ -974,7 +1013,6 @@ class BiathlonData:
                 start_list.append((text_ls[index_athlete].replace("-", " "), self.metadata['race_start']))
 
         self.start_list = start_list
-
 
 if __name__ == "__main__":
     # from string time to seconds: for comparisons

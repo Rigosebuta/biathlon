@@ -245,7 +245,6 @@ class BiathlonData:
 
         # search for place in text
         for pl in place_d:
-
             if pl in text_zero:
                 pl = pl.upper()
 

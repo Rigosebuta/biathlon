@@ -291,7 +291,8 @@ class BiathlonData:
             place_country = 'BGR'
         elif place in ['CANMORE', 'LA PATRIE', 'VALCARTIER', 'WHISTLER']:
             place_country = 'CAN'
-        elif place in ['CHANTY-MANSIJSK', 'ISCHEWSK', 'KRASNAJA POLJANA', 'NOWOSIBIRSK', 'TJUMEN', 'UFA', 'UWAT']:
+        elif place in ['KHANTY-MANSIYSK', 'CHANTY-MANSIJSK', 'ISCHEWSK', 'KRASNAJA POLJANA', 'NOWOSIBIRSK',
+                       'TJUMEN', 'UFA', 'UWAT']:
             place_country = 'RUS'
         elif place in ['CHEILE GRADISTEI']:
             place_country = 'ROU'

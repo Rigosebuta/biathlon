@@ -58,7 +58,7 @@ def main():
     # biathlon_data = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', "WORLD CUP")
     #biathlon_ls = transform_data(r'C:\Users\Michael\Documents\python_projects\biathlon\Tests', 'WORLD CUP')
 
-    biathlon_ls = transform_data(r"C:\Users\Michael\Documents\python_projects\biathlon3\Input", 'IBU JUNIOR CUP')
+    biathlon_ls = transform_data(r"C:\Users\Michael\Documents\python_projects\biathlon3\Input", 'WORLD CUP')
     for doc in biathlon_ls:
         print(doc.metadata)
         dc.metadata_to_database(doc)

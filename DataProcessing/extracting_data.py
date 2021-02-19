@@ -804,12 +804,14 @@ class BiathlonData:
                 shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
                 if shooting_misses_1 == 'Shooting':
                     big_deficit_adjustment -= 1
+
                 shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 36] = int(shooting_misses_1)
 
                 # shooting time 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 40 + add_indiv - big_deficit_adjustment,
                                                               37, text_ls)
+
                 # shooting misses loop 2
                 shooting_misses_2 = text_ls[elem + 43 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 40] = int(shooting_misses_2)
@@ -817,7 +819,6 @@ class BiathlonData:
                 # shooting loop time 2
                 big_deficit_adjustment += self.data_splitting(j, elem + 44 + add_indiv - big_deficit_adjustment,
                                                               41, text_ls)
-
                 # shooting misses loop 3
                 shooting_misses_3 = text_ls[elem + 47 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 44] = int(shooting_misses_3)
@@ -825,7 +826,6 @@ class BiathlonData:
                 # shooting loop time 3
                 big_deficit_adjustment += self.data_splitting(j, elem + 48 + add_indiv - big_deficit_adjustment,
                                                               45, text_ls)
-
                 # shooting misses loop 4
                 shooting_misses_4 = text_ls[elem + 51 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 48] = int(shooting_misses_4)
@@ -833,6 +833,7 @@ class BiathlonData:
                 # shooting loop time 4
                 big_deficit_adjustment += self.data_splitting(j, elem + 52 + add_indiv - big_deficit_adjustment,
                                                               49, text_ls)
+
                 # shooting misses overall
                 shooting_misses_overall = text_ls[elem + 55 - big_deficit_adjustment + add_indiv]
                 self.data.iat[j, 52] = int(shooting_misses_overall)
@@ -840,6 +841,7 @@ class BiathlonData:
                 # shooting time overall
                 big_deficit_adjustment += self.data_splitting(j, elem + 56 + add_indiv - big_deficit_adjustment,
                                                               53, text_ls)
+
                 # range time loop 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 60 + add_indiv - big_deficit_adjustment,
                                                               56, text_ls)

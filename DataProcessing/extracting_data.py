@@ -669,11 +669,20 @@ class BiathlonData:
             self.data.iat[j, column + 2] = int(rank.replace("=", ""))
             return 2
         elif text_ls[position].count(" ") == 1:
-            overall, behind = text_ls[position].split(" ")
-            self.data.iat[j, column] = overall
-            self.data.iat[j, column + 1] = behind
-            self.data.iat[j, column + 2] = int(text_ls[position + 1].replace('=', ""))
-            return 1
+            pos = text_ls[position].find('+')
+            if pos != -1 and pos != 0 and text_ls[position][pos - 1] != " ":
+                overall, behind = text_ls[position].split("+")
+                behind2, rank = behind.split(" ")
+                self.data.iat[j, column] = overall
+                self.data.iat[j, column + 1] = "+" + behind2
+                self.data.iat[j, column + 2] = int(rank.replace("=", ""))
+                return 2
+            else:
+                overall, behind = text_ls[position].split(" ")
+                self.data.iat[j, column] = overall
+                self.data.iat[j, column + 1] = behind
+                self.data.iat[j, column + 2] = int(text_ls[position + 1].replace('=', ""))
+                return 1
         elif text_ls[position].count(" ") == 0:
             if text_ls[position].find('+') != -1 and text_ls[position].find('+') != 0:
                 overall, behind = text_ls[position].split("+")
@@ -758,7 +767,7 @@ class BiathlonData:
                         self.data.iat[j, 4] = text_ls[elem + 4]
 
                 total_rank = text_ls[elem + 5 - big_deficit_adjustment]
-                self.data.iat[j, 5] = int(total_rank)
+                self.data.iat[j, 5] = int(total_rank.replace('=', ""))
 
                 # cumulative time loop 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 7 - big_deficit_adjustment, 6, text_ls)
@@ -795,9 +804,12 @@ class BiathlonData:
                 # if this is the case then increase big_deficit_adjustment
                 if isindividual:
                     counter = 0
-                    for i in range(39, 54):
-                        if " " in text_ls[elem + i - big_deficit_adjustment]:
+                    for i in range(39, 53):
+                        pos = text_ls[elem + i - big_deficit_adjustment].find('+')
+                        if pos != -1 and pos != 0 and text_ls[elem + i - big_deficit_adjustment][pos - 1] != " ":
                             counter += 1
+                        if " " in text_ls[elem + i - big_deficit_adjustment]:
+                            counter += text_ls[elem + i - big_deficit_adjustment].count(" ")
                     big_deficit_adjustment += counter
 
                 # shooting misses loop 1

@@ -696,6 +696,11 @@ class BiathlonData:
                 self.data.iat[j, column + 1] = behind
                 self.data.iat[j, column + 2] = int(rank.replace('=', ""))
                 return 1
+            elif text_ls[position + 1].count("=") == 1:
+                behind, rank = text_ls[position + 1].split("=")
+                self.data.iat[j, column + 1] = behind
+                self.data.iat[j, column + 2] = int(rank.replace('=', ""))
+                return 1
             else:
                 self.data.iat[j, column + 1] = text_ls[position + 1]
                 self.data.iat[j, column + 2] = int(text_ls[position + 2].replace('=', ""))
@@ -736,18 +741,23 @@ class BiathlonData:
                 # else
                 big_deficit_adjustment = 0
 
+
                 # overall time
                 if text_ls[elem + 2].count(" ") == 2:
-                    rank, overall, behind = text_ls[elem + 2].split(" ")
-                    self.data.iat[j, 2] = int(rank.replace("=", ""))
+                    misses, overall, behind = text_ls[elem + 2].split(" ")
+                    self.data.iat[j, 2] = int(misses.replace("=", ""))
                     self.data.iat[j, 3] = overall
                     self.data.iat[j, 4] = behind
                     big_deficit_adjustment += 2
                 elif text_ls[elem + 2].count(" ") == 1:
-                    rank, overall = text_ls[elem + 2].split(" ")
-                    self.data.iat[j, 2] = int(rank.replace("=", ""))
+                    misses, overall = text_ls[elem + 2].split(" ")
+                    pos = overall.find('+')
+                    if pos != -1 and pos != 0 and overall[pos - 1] != " ":
+                        overall, behind = overall.split("+")
+                        big_deficit_adjustment += 1
+                    self.data.iat[j, 2] = int(misses.replace("=", ""))
                     self.data.iat[j, 3] = overall
-                    self.data.iat[j, 4] = text_ls[elem + 3]
+                    self.data.iat[j, 4] = behind
                     big_deficit_adjustment += 1
                 elif text_ls[elem + 2].count(" ") == 0:
                     self.data.iat[j, 2] = int(text_ls[elem + 2].replace("=", ""))
@@ -756,8 +766,9 @@ class BiathlonData:
                         self.data.iat[j, 3] = overall
                         self.data.iat[j, 4] = behind
                         big_deficit_adjustment += 1
-                    elif (text_ls[elem + 3].count(" ") == 1 and text_ls[elem + 3].find('+') != -1 and
-                          text_ls[elem + 3].find('+') != 0):
+                    elif (text_ls[elem + 3].count(" ") == 0 and text_ls[elem + 3].find('+') != -1 and
+                          text_ls[elem + 3].find('+') != 0 and
+                          text_ls[elem + 3][text_ls[elem + 3].find('+') - 1] != " "):
                         overall, behind = text_ls[elem + 3].split("+")
                         self.data.iat[j, 3] = overall
                         self.data.iat[j, 4] = '+' + behind
@@ -812,7 +823,17 @@ class BiathlonData:
                             counter += text_ls[elem + i - big_deficit_adjustment].count(" ")
                     big_deficit_adjustment += counter
 
+
                 # shooting misses loop 1
+                for t in range(elem + 39 - big_deficit_adjustment + add_indiv - 15,
+                               elem + 39 - big_deficit_adjustment + add_indiv + 15):
+                    if text_ls[t] == 'Shooting':
+                        while t != elem + 39 - big_deficit_adjustment + add_indiv:
+                            if t > elem + 39 - big_deficit_adjustment + add_indiv:
+                                big_deficit_adjustment -= 1
+                            if t < elem + 39 - big_deficit_adjustment + add_indiv:
+                                big_deficit_adjustment += 1
+                        break
                 shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
                 if shooting_misses_1 == 'Shooting':
                     big_deficit_adjustment -= 1

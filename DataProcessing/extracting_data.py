@@ -712,7 +712,7 @@ class BiathlonData:
 
         for k, index_athlete in enumerate(index_list):
             if index_athlete >= minimum_limit:
-                in_evaluation = index_list[:k]
+                in_evaluation = index_list[1:5]
                 break
         else:
             in_evaluation = index_list
@@ -741,7 +741,7 @@ class BiathlonData:
                 # else
                 big_deficit_adjustment = 0
 
-                mt = 4
+                mt = 5
                 for m in range((elem + 2), (elem + 5)):
                     if " " in text_ls[m]:
                         mt -= 1

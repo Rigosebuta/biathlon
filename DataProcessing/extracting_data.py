@@ -712,7 +712,7 @@ class BiathlonData:
 
         for k, index_athlete in enumerate(index_list):
             if index_athlete >= minimum_limit:
-                in_evaluation = index_list[1:5]
+                in_evaluation = index_list[16:17]
                 break
         else:
             in_evaluation = index_list

@@ -693,7 +693,14 @@ class BiathlonData:
                 self.data.iat[j, column + 2] = text_ls[position + 1]
                 return 1
             self.data.iat[j, column] = text_ls[position]
-            if text_ls[position + 1].count(" ") == 1:
+            if text_ls[position + 1].count(" ") == 2:
+                behind, rank, misses = text_ls[position + 1].split(" ")
+                self.data.iat[j, column + 1] = behind
+                self.data.iat[j, column + 2] = int(rank.replace('=', ""))
+                self.data.iat[j, column + 3] = int(misses)
+                self.skip_flag = True
+                return 2
+            elif text_ls[position + 1].count(" ") == 1:
                 behind, rank = text_ls[position + 1].split(" ")
                 self.data.iat[j, column + 1] = behind
                 self.data.iat[j, column + 2] = int(rank.replace('=', ""))
@@ -705,9 +712,8 @@ class BiathlonData:
                 return 1
             else:
                 self.data.iat[j, column + 1] = text_ls[position + 1]
-                print("bababa")
                 if text_ls[position + 2].count(" ") == 1:
-                    pattern = re.compile(r"\d{1,2}\s\d{1}")
+                    pattern = re.compile(r"=?\d{1,2}\s\d{1}")
                     if pattern.match(text_ls[position + 2]):
                         rank, misses = text_ls[position + 2].split(" ")
                         self.data.iat[j, column + 2] = int(rank.replace('=', ""))
@@ -791,8 +797,16 @@ class BiathlonData:
                 total_rank = text_ls[elem + 5 - big_deficit_adjustment]
                 self.data.iat[j, 5] = int(total_rank.replace('=', ""))
 
+
                 # cumulative time loop 1
-                big_deficit_adjustment += self.data_splitting(j, elem + 7 - big_deficit_adjustment, 6, text_ls)
+                if "1" in text_ls[elem + 6 - big_deficit_adjustment]:
+                    cum, cum2, time, behind = text_ls[elem + 6 - big_deficit_adjustment].split(" ")
+                    self.data.iat[j, 6] = time
+                    self.data.iat[j, 7] = behind
+                    self.data.iat[j, 8] = int(text_ls[elem + 7 - big_deficit_adjustment].replace('=', ""))
+                    big_deficit_adjustment += 2
+                else:
+                    big_deficit_adjustment += self.data_splitting(j, elem + 7 - big_deficit_adjustment, 6, text_ls)
 
                 # cumulative time loop 2
                 big_deficit_adjustment += self.data_splitting(j, elem + 10 - big_deficit_adjustment, 9, text_ls)
@@ -844,8 +858,8 @@ class BiathlonData:
                             if t < elem + 39 - big_deficit_adjustment + add_indiv:
                                 big_deficit_adjustment += 1
                         break
+
                 shooting_misses_1 = text_ls[elem + 39 - big_deficit_adjustment + add_indiv]
-                print('aaaa')
                 if shooting_misses_1 == 'Shooting':
                     big_deficit_adjustment -= 1
 

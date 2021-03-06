@@ -672,11 +672,19 @@ class BiathlonData:
             return 2
         elif text_ls[position].count(" ") == 1:
             pos = text_ls[position].find('+')
+            pos2 = text_ls[position].find('=')
             if pos != -1 and pos != 0 and text_ls[position][pos - 1] != " ":
                 overall, behind = text_ls[position].split("+")
                 behind2, rank = behind.split(" ")
                 self.data.iat[j, column] = overall
                 self.data.iat[j, column + 1] = "+" + behind2
+                self.data.iat[j, column + 2] = int(rank.replace("=", ""))
+                return 2
+            elif pos2 != -1 and pos2 != 0 and text_ls[position][pos2 - 1] != " ":
+                overall, behind = text_ls[position].split(" ")
+                behind2, rank = behind.split("=")
+                self.data.iat[j, column] = overall
+                self.data.iat[j, column + 1] = behind2
                 self.data.iat[j, column + 2] = int(rank.replace("=", ""))
                 return 2
             else:
@@ -799,12 +807,30 @@ class BiathlonData:
 
 
                 # cumulative time loop 1
-                if "1" in text_ls[elem + 6 - big_deficit_adjustment]:
+                if text_ls[elem + 6 - big_deficit_adjustment].count(" ") == 4:
+                    cum, cum2, time, behind, rank = text_ls[elem + 6 - big_deficit_adjustment].split(" ")
+                    self.data.iat[j, 6] = time
+                    self.data.iat[j, 7] = behind
+                    self.data.iat[j, 8] = int(rank.replace('=', ""))
+                    big_deficit_adjustment += 3
+                elif text_ls[elem + 6 - big_deficit_adjustment].count(" ") == 3:
                     cum, cum2, time, behind = text_ls[elem + 6 - big_deficit_adjustment].split(" ")
                     self.data.iat[j, 6] = time
                     self.data.iat[j, 7] = behind
                     self.data.iat[j, 8] = int(text_ls[elem + 7 - big_deficit_adjustment].replace('=', ""))
                     big_deficit_adjustment += 2
+                elif text_ls[elem + 6 - big_deficit_adjustment].count(" ") == 2:
+                    cum, cum2, time = text_ls[elem + 6 - big_deficit_adjustment].split(" ")
+                    self.data.iat[j, 6] = time
+                    if text_ls[elem + 7 - big_deficit_adjustment].count(" ") == 1:
+                        behind, rank = text_ls[elem + 7 - big_deficit_adjustment].split(" ")
+                        self.data.iat[j, 7] = behind
+                        self.data.iat[j, 8] = int(rank.replace('=', ""))
+                        big_deficit_adjustment += 2
+                    else:
+                        self.data.iat[j, 7] = text_ls[elem + 7 - big_deficit_adjustment]
+                        self.data.iat[j, 8] = int(text_ls[elem + 8 - big_deficit_adjustment].replace('=', ""))
+                        big_deficit_adjustment += 1
                 else:
                     big_deficit_adjustment += self.data_splitting(j, elem + 7 - big_deficit_adjustment, 6, text_ls)
 
@@ -819,6 +845,15 @@ class BiathlonData:
 
                 # cumulative time overall
                 big_deficit_adjustment += self.data_splitting(j, elem + 19 - big_deficit_adjustment, 18, text_ls)
+                for t in range(elem + 22 - big_deficit_adjustment- 10,
+                               elem + 22 - big_deficit_adjustment + 10):
+                    if text_ls[t] == 'Loop Time':
+                        while t != elem + 22 - big_deficit_adjustment:
+                            if t > elem + 22 - big_deficit_adjustment:
+                                big_deficit_adjustment -= 1
+                            if t < elem + 22 - big_deficit_adjustment:
+                                big_deficit_adjustment += 1
+                        break
 
                 # loop time 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 23 - big_deficit_adjustment, 21, text_ls)
@@ -867,47 +902,61 @@ class BiathlonData:
                 self.data.iat[j, 36] = int(shooting_misses_1)
 
                 # shooting time 1
-                big_deficit_adjustment += self.data_splitting(j, elem + 40 + add_indiv - big_deficit_adjustment,
-                                                              37, text_ls)
+                #big_deficit_adjustment += self.data_splitting(j, elem + 40 + add_indiv - big_deficit_adjustment,
+                 #                                             37, text_ls)
 
                 # shooting misses loop 2
+                big_deficit_adjustment +=3
                 if not self.skip_flag:
                     shooting_misses_2 = text_ls[elem + 43 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 40] = int(shooting_misses_2)
                 self.skip_flag = False
 
                 # shooting loop time 2
-                big_deficit_adjustment += self.data_splitting(j, elem + 44 + add_indiv - big_deficit_adjustment,
-                                                              41, text_ls)
+                #big_deficit_adjustment += self.data_splitting(j, elem + 44 + add_indiv - big_deficit_adjustment,
+                 #                                             41, text_ls)
 
                 # shooting misses loop 3
+                big_deficit_adjustment += 3
                 if not self.skip_flag:
                     shooting_misses_3 = text_ls[elem + 47 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 44] = int(shooting_misses_3)
                 self.skip_flag = False
 
                 # shooting loop time 3
-                big_deficit_adjustment += self.data_splitting(j, elem + 48 + add_indiv - big_deficit_adjustment,
-                                                              45, text_ls)
+                #big_deficit_adjustment += self.data_splitting(j, elem + 48 + add_indiv - big_deficit_adjustment,
+                 #                                             45, text_ls)
                 # shooting misses loop 4
+                big_deficit_adjustment +=3
                 if not self.skip_flag:
                     shooting_misses_4 = text_ls[elem + 51 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 48] = int(shooting_misses_4)
                 self.skip_flag = False
 
                 # shooting loop time 4
-                big_deficit_adjustment += self.data_splitting(j, elem + 52 + add_indiv - big_deficit_adjustment,
-                                                              49, text_ls)
+                #big_deficit_adjustment += self.data_splitting(j, elem + 52 + add_indiv - big_deficit_adjustment,
+                 #                                             49, text_ls)
 
                 # shooting misses overall
+                big_deficit_adjustment +=3
                 if not self.skip_flag:
                     shooting_misses_overall = text_ls[elem + 55 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 52] = int(shooting_misses_overall)
                 self.skip_flag = False
 
                 # shooting time overall
-                big_deficit_adjustment += self.data_splitting(j, elem + 56 + add_indiv - big_deficit_adjustment,
-                                                              53, text_ls)
+                #big_deficit_adjustment += self.data_splitting(j, elem + 56 + add_indiv - big_deficit_adjustment,
+                 #                                             53, text_ls)
+
+                for t in range(elem + 59 - big_deficit_adjustment + add_indiv - 20,
+                               elem + 59 - big_deficit_adjustment + add_indiv + 20):
+                    if text_ls[t] == 'Range Time':
+                        while t != elem + 59 - big_deficit_adjustment + add_indiv:
+                            if t > elem + 59 - big_deficit_adjustment + add_indiv:
+                                big_deficit_adjustment -= 1
+                            if t < elem + 59 - big_deficit_adjustment + add_indiv:
+                                big_deficit_adjustment += 1
+                        break
 
                 # range time loop 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 60 + add_indiv - big_deficit_adjustment,
@@ -924,6 +973,16 @@ class BiathlonData:
                 # range overall
                 big_deficit_adjustment += self.data_splitting(j, elem + 72 + add_indiv - big_deficit_adjustment,
                                                               68, text_ls)
+
+                for t in range(elem + 75 - big_deficit_adjustment + add_indiv - 20,
+                               elem + 75 - big_deficit_adjustment + add_indiv + 20):
+                    if text_ls[t] == 'Course Time':
+                        while t != elem + 75 - big_deficit_adjustment + add_indiv:
+                            if t > elem + 75 - big_deficit_adjustment + add_indiv:
+                                big_deficit_adjustment -= 1
+                            if t < elem + 75 - big_deficit_adjustment + add_indiv:
+                                big_deficit_adjustment += 1
+                        break
                 # course loop 1
                 big_deficit_adjustment += self.data_splitting(j, elem + 76 + add_indiv - big_deficit_adjustment,
                                                               71, text_ls)

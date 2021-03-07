@@ -98,7 +98,6 @@ class BiathlonData:
         elif self.metadata['race_type'] == 'MASS START':
             self.get_start_list()
 
-
     def get_metadata(self):
         """This method extracts metadata from the document."""
 
@@ -805,7 +804,6 @@ class BiathlonData:
                 total_rank = text_ls[elem + 5 - big_deficit_adjustment]
                 self.data.iat[j, 5] = int(total_rank.replace('=', ""))
 
-
                 # cumulative time loop 1
                 if text_ls[elem + 6 - big_deficit_adjustment].count(" ") == 4:
                     cum, cum2, time, behind, rank = text_ls[elem + 6 - big_deficit_adjustment].split(" ")
@@ -845,7 +843,7 @@ class BiathlonData:
 
                 # cumulative time overall
                 big_deficit_adjustment += self.data_splitting(j, elem + 19 - big_deficit_adjustment, 18, text_ls)
-                for t in range(elem + 22 - big_deficit_adjustment- 10,
+                for t in range(elem + 22 - big_deficit_adjustment - 10,
                                elem + 22 - big_deficit_adjustment + 10):
                     if text_ls[t] == 'Loop Time':
                         while t != elem + 22 - big_deficit_adjustment:
@@ -902,51 +900,47 @@ class BiathlonData:
                 self.data.iat[j, 36] = int(shooting_misses_1)
 
                 # shooting time 1
-                #big_deficit_adjustment += self.data_splitting(j, elem + 40 + add_indiv - big_deficit_adjustment,
-                 #                                             37, text_ls)
+                big_deficit_adjustment += self.data_splitting(j, elem + 40 + add_indiv - big_deficit_adjustment,
+                                                              37, text_ls)
 
                 # shooting misses loop 2
-                big_deficit_adjustment +=3
                 if not self.skip_flag:
                     shooting_misses_2 = text_ls[elem + 43 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 40] = int(shooting_misses_2)
                 self.skip_flag = False
 
                 # shooting loop time 2
-                #big_deficit_adjustment += self.data_splitting(j, elem + 44 + add_indiv - big_deficit_adjustment,
-                 #                                             41, text_ls)
+                big_deficit_adjustment += self.data_splitting(j, elem + 44 + add_indiv - big_deficit_adjustment,
+                                                              41, text_ls)
 
                 # shooting misses loop 3
-                big_deficit_adjustment += 3
                 if not self.skip_flag:
                     shooting_misses_3 = text_ls[elem + 47 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 44] = int(shooting_misses_3)
                 self.skip_flag = False
 
                 # shooting loop time 3
-                #big_deficit_adjustment += self.data_splitting(j, elem + 48 + add_indiv - big_deficit_adjustment,
-                 #                                             45, text_ls)
+                big_deficit_adjustment += self.data_splitting(j, elem + 48 + add_indiv - big_deficit_adjustment,
+                                                              45, text_ls)
                 # shooting misses loop 4
-                big_deficit_adjustment +=3
                 if not self.skip_flag:
                     shooting_misses_4 = text_ls[elem + 51 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 48] = int(shooting_misses_4)
                 self.skip_flag = False
 
                 # shooting loop time 4
-                #big_deficit_adjustment += self.data_splitting(j, elem + 52 + add_indiv - big_deficit_adjustment,
-                 #                                             49, text_ls)
+                big_deficit_adjustment += self.data_splitting(j, elem + 52 + add_indiv - big_deficit_adjustment,
+                                                              49, text_ls)
 
                 # shooting misses overall
-                big_deficit_adjustment +=3
                 if not self.skip_flag:
                     shooting_misses_overall = text_ls[elem + 55 - big_deficit_adjustment + add_indiv]
                     self.data.iat[j, 52] = int(shooting_misses_overall)
                 self.skip_flag = False
 
                 # shooting time overall
-                #big_deficit_adjustment += self.data_splitting(j, elem + 56 + add_indiv - big_deficit_adjustment,
-                 #                                             53, text_ls)
+                big_deficit_adjustment += self.data_splitting(j, elem + 56 + add_indiv - big_deficit_adjustment,
+                                                              53, text_ls)
 
                 for t in range(elem + 59 - big_deficit_adjustment + add_indiv - 20,
                                elem + 59 - big_deficit_adjustment + add_indiv + 20):
@@ -1141,6 +1135,7 @@ class BiathlonData:
                 start_list.append((text_ls[index_athlete].replace("-", " "), self.metadata['race_start']))
 
         self.start_list = start_list
+
 
 if __name__ == "__main__":
     # from string time to seconds: for comparisons

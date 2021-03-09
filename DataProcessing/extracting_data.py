@@ -693,6 +693,7 @@ class BiathlonData:
                 self.data.iat[j, column + 2] = int(text_ls[position + 1].replace('=', ""))
                 return 1
         elif text_ls[position].count(" ") == 0:
+            print(text_ls[position])
             if text_ls[position].find('+') != -1 and text_ls[position].find('+') != 0:
                 overall, behind = text_ls[position].split("+")
                 self.data.iat[j, column] = overall
@@ -707,13 +708,21 @@ class BiathlonData:
                 self.data.iat[j, column + 3] = int(misses)
                 self.skip_flag = True
                 return 2
-            elif text_ls[position + 1].count(" ") == 1:
-                behind, rank = text_ls[position + 1].split(" ")
+            elif text_ls[position + 1].count("=") == 1:
+                if text_ls[position + 1].count(" ") == 1:
+                    behind, rank = text_ls[position + 1].split("=")
+                    rank, misses = rank.split(" ")
+                    self.data.iat[j, column + 1] = behind
+                    self.data.iat[j, column + 2] = int(rank)
+                    self.data.iat[j, column + 3] = int(misses)
+                    self.skip_flag = True
+                    return 2
+                behind, rank = text_ls[position + 1].split("=")
                 self.data.iat[j, column + 1] = behind
                 self.data.iat[j, column + 2] = int(rank.replace('=', ""))
                 return 1
-            elif text_ls[position + 1].count("=") == 1:
-                behind, rank = text_ls[position + 1].split("=")
+            elif text_ls[position + 1].count(" ") == 1:
+                behind, rank = text_ls[position + 1].split(" ")
                 self.data.iat[j, column + 1] = behind
                 self.data.iat[j, column + 2] = int(rank.replace('=', ""))
                 return 1

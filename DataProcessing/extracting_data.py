@@ -233,7 +233,7 @@ class BiathlonData:
                    'SOLDIER HOLLOW', 'HOLMENKOLLEN', 'SOLDIER HOLLOW', 'WHISTLER OLYMPIC PARK',
                    'Kiry Biathlon Stadium', 'MERIBEL', 'GURNIGEL', 'KHANTY-MANSIYSK',
                    'Liatoppen Skisenter', 'LIATOPPEN SKISENTER', 'KOSCIELISKO',
-                   'BIATHLON STADION AM GRENZADLER']
+                   'BIATHLON STADION AM GRENZADLER', 'CESANA SAN SICARIO']
         place_cap = [k.capitalize() for k in place_d]
         place_more = ['Salt Lake City', 'Lake Placid', 'Duszniki-Zdroj', 'Haute-Maurienne',
                       'Bayerisch Eisenstein', 'Clausthal-Zellerfeld', 'Cesana-San Sicario',
@@ -262,6 +262,9 @@ class BiathlonData:
                     pl = 'OSRBLIE'
                 elif pl == 'BIATHLON STADION AM GRENZADLER':
                     pl = 'OBERHOF'
+                elif pl == 'CESANA SAN SICARIO':
+                    pl = 'CESANA-SAN SICARIO'
+
                 self.metadata['place'] = pl
                 break
         else:  # gets only executed if no match is found
@@ -693,7 +696,6 @@ class BiathlonData:
                 self.data.iat[j, column + 2] = int(text_ls[position + 1].replace('=', ""))
                 return 1
         elif text_ls[position].count(" ") == 0:
-            print(text_ls[position])
             if text_ls[position].find('+') != -1 and text_ls[position].find('+') != 0:
                 overall, behind = text_ls[position].split("+")
                 self.data.iat[j, column] = overall
@@ -710,13 +712,23 @@ class BiathlonData:
                 return 2
             elif text_ls[position + 1].count("=") == 1:
                 if text_ls[position + 1].count(" ") == 1:
-                    behind, rank = text_ls[position + 1].split("=")
-                    rank, misses = rank.split(" ")
-                    self.data.iat[j, column + 1] = behind
-                    self.data.iat[j, column + 2] = int(rank)
-                    self.data.iat[j, column + 3] = int(misses)
-                    self.skip_flag = True
-                    return 2
+                    if abs(text_ls[position + 1].find(" ") - text_ls[position + 1].find("=")) == 1:
+                        #print("Neinnnnnnnnnnnnnn", text_ls[position], text_ls[position + 1])
+                        behind, rank = text_ls[position + 1].split("=")
+                        behind = behind[:len(behind)-1]
+                        self.data.iat[j, column + 1] = behind
+                        self.data.iat[j, column + 2] = int(rank.replace('=', ""))
+                        #print("Alles ok")
+                        return 1
+                    else:
+
+                        behind, rank = text_ls[position + 1].split("=")
+                        rank, misses = rank.split(" ")
+                        self.data.iat[j, column + 1] = behind
+                        self.data.iat[j, column + 2] = int(rank)
+                        self.data.iat[j, column + 3] = int(misses)
+                        self.skip_flag = True
+                        return 2
                 behind, rank = text_ls[position + 1].split("=")
                 self.data.iat[j, column + 1] = behind
                 self.data.iat[j, column + 2] = int(rank.replace('=', ""))
